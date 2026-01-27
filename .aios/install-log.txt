@@ -1,0 +1,87 @@
+[2026-01-27T14:57:31.749Z] [INFO] Starting MCP installation...
+[2026-01-27T14:57:31.750Z] [INFO] Platform: win32
+[2026-01-27T14:57:31.751Z] [INFO] Selected MCPs: browser, context7, exa, desktop-commander
+[2026-01-27T14:57:31.752Z] [INFO] Installing Browser (Puppeteer)...
+[2026-01-27T14:57:31.752Z] [INFO] Installing Exa Web Search...
+[2026-01-27T14:57:31.752Z] [INFO] Installing Context7...
+[2026-01-27T14:57:31.752Z] [INFO] Installing Desktop Commander...
+[2026-01-27T14:57:31.753Z] [INFO] Validating package: @modelcontextprotocol/server-puppeteer
+[2026-01-27T14:57:31.753Z] [INFO] Validating package: exa-mcp-server
+[2026-01-27T14:57:31.753Z] [INFO] Validating package: @wonderwhy-er/desktop-commander
+[2026-01-27T14:57:31.753Z] [INFO] Validating package: @upstash/context7-mcp
+[2026-01-27T14:57:41.784Z] [INFO] Package @modelcontextprotocol/server-puppeteer validation skipped (Command failed: npx -y @modelcontextprotocol/server-puppeteer --version
+npm warn deprecated @modelcontextprotocol/server-puppeteer@2025.5.12: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+) - will be installed on first use
+[2026-01-27T14:57:41.786Z] [SUCCESS] Browser (Puppeteer) installed successfully
+[2026-01-27T14:57:41.789Z] [INFO] Package exa-mcp-server validation skipped (Command failed: npx -y exa-mcp-server --version
+) - will be installed on first use
+[2026-01-27T14:57:41.792Z] [SUCCESS] Exa Web Search installed successfully
+[2026-01-27T14:57:41.820Z] [INFO] Package @wonderwhy-er/desktop-commander validation skipped (Command failed: npx -y @wonderwhy-er/desktop-commander --version
+) - will be installed on first use
+[2026-01-27T14:57:41.822Z] [SUCCESS] Desktop Commander installed successfully
+[2026-01-27T14:57:41.838Z] [INFO] Package @upstash/context7-mcp validation skipped (Command failed: npx -y @upstash/context7-mcp --version
+) - will be installed on first use
+[2026-01-27T14:57:41.841Z] [SUCCESS] Context7 installed successfully
+[2026-01-27T14:57:41.842Z] [INFO] Health checks deferred to Story 1.8
+[2026-01-27T14:57:41.844Z] [INFO] MCP installation complete
+[2026-01-27T14:57:41.845Z] [INFO] Success: 4
+[2026-01-27T14:57:41.845Z] [INFO] Warnings: 0
+[2026-01-27T14:57:41.846Z] [INFO] Failed: 0
+[2026-01-27T15:03:02.687Z] [INFO] Starting MCP installation...
+[2026-01-27T15:03:02.689Z] [INFO] Platform: win32
+[2026-01-27T15:03:02.689Z] [INFO] Selected MCPs: browser, context7, exa, desktop-commander
+[2026-01-27T15:03:02.692Z] [INFO] Backed up existing .mcp.json
+[2026-01-27T15:03:02.693Z] [INFO] Installing Browser (Puppeteer)...
+[2026-01-27T15:03:02.693Z] [INFO] Installing Context7...
+[2026-01-27T15:03:02.693Z] [INFO] Installing Exa Web Search...
+[2026-01-27T15:03:02.693Z] [INFO] Installing Desktop Commander...
+[2026-01-27T15:03:02.695Z] [INFO] Validating package: @modelcontextprotocol/server-puppeteer
+[2026-01-27T15:03:02.695Z] [INFO] Validating package: @upstash/context7-mcp
+[2026-01-27T15:03:02.695Z] [INFO] Validating package: exa-mcp-server
+[2026-01-27T15:03:02.695Z] [INFO] Validating package: @wonderwhy-er/desktop-commander
+[2026-01-27T15:03:06.157Z] [INFO] Package @upstash/context7-mcp validation skipped (Command failed: npx -y @upstash/context7-mcp --version
+WARNING: Using default CLIENT_IP_ENCRYPTION_KEY.
+error: too many arguments. Expected 0 arguments but got 1.
+) - will be installed on first use
+[2026-01-27T15:03:06.159Z] [SUCCESS] Context7 installed successfully
+[2026-01-27T15:03:06.484Z] [INFO] Package @modelcontextprotocol/server-puppeteer validation skipped (Command failed: npx -y @modelcontextprotocol/server-puppeteer --version
+npm warn deprecated @modelcontextprotocol/server-puppeteer@2025.5.12: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+node:internal/modules/esm/resolve:204
+  const resolvedOption = FSLegacyMainResolve(pkgPath, packageConfig.main, baseStringified);
+                         ^
+
+Error: Cannot find package 'C:\Users\adria\AppData\Local\npm-cache\_npx\ab5cd9f6d13a2312\node_modules\zod\index.js' imported from C:\Users\adria\AppData\Local\npm-cache\_npx\ab5cd9f6d13a2312\node_modules\@modelcontextprotocol\sdk\dist\types.js
+    at legacyMainResolve (node:internal/modules/esm/resolve:204:26)
+    at packageResolve (node:internal/modules/esm/resolve:777:12)
+    at moduleResolve (node:internal/modules/esm/resolve:853:18)
+    at defaultResolve (node:internal/modules/esm/resolve:983:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:783:12)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:707:25)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:690:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:307:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:183:49) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.18.0
+) - will be installed on first use
+[2026-01-27T15:03:06.486Z] [SUCCESS] Browser (Puppeteer) installed successfully
+[2026-01-27T15:03:12.757Z] [INFO] Package exa-mcp-server validation skipped (Command failed: npx -y exa-mcp-server --version
+[smithery] Starting MCP server with stdio transport
+[smithery] Creating server.
+[EXA-MCP-DEBUG] Server initialized with modern MCP SDK and Smithery CLI support
+[Agnost Analytics INFO] 2026-01-27T15:03:05.440Z - Agnost Analytics SDK initialized successfully
+[Agnost Analytics INFO] 2026-01-27T15:03:05.440Z - MCP server tracking enabled successfully (immediate)
+[Agnost Analytics INFO] 2026-01-27T15:03:05.440Z - Skipping initial session creation - client info not yet available (will create on first tool call)
+[smithery] MCP server connected to stdio transport
+[smithery] Configuration loaded: { debug: false }
+) - will be installed on first use
+[2026-01-27T15:03:12.758Z] [SUCCESS] Exa Web Search installed successfully
+[2026-01-27T15:03:12.788Z] [INFO] Package @wonderwhy-er/desktop-commander validation skipped (Command failed: npx -y @wonderwhy-er/desktop-commander --version
+) - will be installed on first use
+[2026-01-27T15:03:12.790Z] [SUCCESS] Desktop Commander installed successfully
+[2026-01-27T15:03:12.791Z] [INFO] Health checks deferred to Story 1.8
+[2026-01-27T15:03:12.792Z] [INFO] MCP installation complete
+[2026-01-27T15:03:12.793Z] [INFO] Success: 4
+[2026-01-27T15:03:12.793Z] [INFO] Warnings: 0
+[2026-01-27T15:03:12.793Z] [INFO] Failed: 0

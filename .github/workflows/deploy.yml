@@ -1,0 +1,219 @@
+name: Deploy - Staging & Production
+
+on:
+  push:
+    branches:
+      - develop  # Deploys to staging
+      - main     # Deploys to production
+  workflow_dispatch:  # Allow manual deployment
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  determine-environment:
+    name: Determine Target Environment
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
+      vercel-env-flag: ${{ steps.set-env.outputs.flag }}
+
+    steps:
+      - name: Determine Environment
+        id: set-env
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+            echo "flag=--prod" >> $GITHUB_OUTPUT
+            echo "🚀 Deploying to PRODUCTION"
+          else
+            echo "environment=staging" >> $GITHUB_OUTPUT
+            echo "flag=" >> $GITHUB_OUTPUT
+            echo "🔄 Deploying to STAGING"
+          fi
+
+  deploy:
+    name: Deploy to ${{ needs.determine-environment.outputs.environment }}
+    runs-on: ubuntu-latest
+    needs: [determine-environment]
+    environment:
+      name: ${{ needs.determine-environment.outputs.environment }}
+      url: ${{ steps.deployment.outputs.deployment_url }}
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: npm
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=${{ needs.determine-environment.outputs.environment }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: vercel build
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel
+        id: deployment
+        run: |
+          VERCEL_OUTPUT=$(vercel deploy --prebuilt ${{ needs.determine-environment.outputs.vercel-env-flag }} 2>&1)
+          DEPLOYMENT_URL=$(echo "$VERCEL_OUTPUT" | grep -oP '(?<=https://)[^\s]+' | head -1)
+          echo "deployment_url=https://${DEPLOYMENT_URL}" >> $GITHUB_OUTPUT
+          echo "Deployed to: https://${DEPLOYMENT_URL}"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Wait for Deployment to Stabilize
+        run: sleep 5
+
+      - name: Health Check
+        id: health-check
+        run: |
+          HEALTH_URL="${{ steps.deployment.outputs.deployment_url }}/api/health"
+          echo "Checking health at: $HEALTH_URL"
+
+          for i in {1..10}; do
+            echo "Attempt $i/10..."
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTH_URL" || echo "000")
+
+            if [ "$RESPONSE" = "200" ]; then
+              echo "✅ Health check passed (HTTP 200)"
+              HEALTH_DETAILS=$(curl -s "$HEALTH_URL")
+              echo "Health details: $HEALTH_DETAILS"
+              echo "health_status=healthy" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+
+            echo "⏳ Received HTTP $RESPONSE, retrying in 3 seconds..."
+            sleep 3
+          done
+
+          echo "❌ Health check failed after 10 attempts"
+          exit 1
+
+      - name: Smoke Test - Landing Page
+        run: |
+          curl -f -s "${{ steps.deployment.outputs.deployment_url }}/" > /dev/null
+          echo "✅ Landing page loads successfully"
+
+      - name: Smoke Test - API Endpoint
+        run: |
+          curl -f -s "${{ steps.deployment.outputs.deployment_url }}/api/health" | jq .
+          echo "✅ API endpoint responds correctly"
+
+      - name: Verify Build Success
+        if: success()
+        run: |
+          echo "## ✅ Deployment Successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ needs.determine-environment.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** ${{ steps.deployment.outputs.deployment_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Health Status:** ${{ steps.health-check.outputs.health_status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployed At:** $(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_STEP_SUMMARY
+          echo "**Git SHA:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Deployment Failure Alert
+        if: failure()
+        run: |
+          echo "## ❌ Deployment Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ needs.determine-environment.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Time:** $(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "See logs for details." >> $GITHUB_STEP_SUMMARY
+          exit 1
+
+      - name: Notify Slack on Success
+        if: success()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+          payload: |
+            {
+              "text": "✅ Deployment Successful",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "✅ Deployment Successful"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Environment:*\n${{ needs.determine-environment.outputs.environment }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch:*\n${{ github.ref_name }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commit:*\n${{ github.sha }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*URL:*\n${{ steps.deployment.outputs.deployment_url }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        continue-on-error: true
+
+      - name: Notify Slack on Failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+          payload: |
+            {
+              "text": "❌ Deployment Failed",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "❌ Deployment Failed"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Environment:*\n${{ needs.determine-environment.outputs.environment }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch:*\n${{ github.ref_name }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        continue-on-error: true
+
+permissions:
+  contents: read
+  deployments: write
+  checks: write
+  pull-requests: write
