@@ -20,28 +20,7 @@ export default defineConfig(({ mode }) => {
         }
       },
       build: {
-        // Increase chunk size limit to accommodate large dependencies
-        chunkSizeWarningLimit: 1500,
-        // Optimize for production
-        minify: 'terser',
-        sourcemap: false, // Disable sourcemap in production to avoid Sentry issues
-        rollupOptions: {
-          output: {
-            manualChunks: {
-              'vendor': [
-                'react',
-                'react-dom',
-                '@sentry/react',
-              ],
-              'supabase': [
-                '@supabase/supabase-js',
-              ],
-              'gemini': [
-                '@google/genai',
-              ]
-            }
-          }
-        }
+        chunkSizeWarningLimit: 2000
       }
     };
 });

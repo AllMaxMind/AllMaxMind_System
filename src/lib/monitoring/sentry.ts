@@ -22,50 +22,40 @@ export const initSentry = () => {
   // Only init if DSN is available
   if (!dsn) return;
 
-  try {
-    Sentry.init({
-      dsn: dsn,
-      integrations: [
-        new BrowserTracing({
-          tracingOrigins: ["localhost", /allmaxmind\.com/],
-        }),
-        // Cast to any to bypass type check if Replay definition is missing
-        new (Sentry as any).Replay(),
-      ],
+  Sentry.init({
+    dsn: dsn,
+    integrations: [
+      new BrowserTracing({
+        tracingOrigins: ["localhost", /allmaxmind\.com/],
+      }),
+    ],
 
-      // Performance Monitoring
-      tracesSampleRate: 0.2, // 20% das transações
-      replaysSessionSampleRate: 0.1, // 10% das sessões
-      replaysOnErrorSampleRate: 1.0, // 100% dos erros
+    // Performance Monitoring
+    tracesSampleRate: 0.1,
+    replaysSessionSampleRate: 0.05,
+    replaysOnErrorSampleRate: 0.5,
 
-      environment: environment,
-      release: `all-max-mind@${appVersion}`,
+    environment: environment,
+    release: `all-max-mind@${appVersion}`,
 
-      // Disable sourcemap processing in production to avoid Vite build errors
-      attachStacktrace: false,
-      maxValueLength: 1000,
-
-      beforeSend(event, hint) {
-        // Filtrar eventos sensíveis
-        if (event.request?.url?.includes('password') || event.request?.url?.includes('token')) {
-          return null;
-        }
-
-        // Anonimizar dados do usuário
-        if (event.user) {
-          event.user = {
-            ...event.user,
-            email: undefined, // Type safe removal
-            ip_address: undefined
-          };
-        }
-
-        return event;
+    beforeSend(event) {
+      // Filtrar eventos sensíveis
+      if (event.request?.url?.includes('password') || event.request?.url?.includes('token')) {
+        return null;
       }
-    });
-  } catch (error) {
-    console.warn('[Sentry] Initialization warning:', error);
-  }
+
+      // Anonimizar dados do usuário
+      if (event.user) {
+        event.user = {
+          ...event.user,
+          email: undefined,
+          ip_address: undefined
+        };
+      }
+
+      return event;
+    }
+  });
 
   // Capturar erros não tratados
   window.addEventListener('unhandledrejection', (event) => {
