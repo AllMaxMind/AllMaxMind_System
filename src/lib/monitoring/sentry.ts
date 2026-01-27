@@ -31,21 +31,25 @@ export const initSentry = () => {
       // Cast to any to bypass type check if Replay definition is missing
       new (Sentry as any).Replay(),
     ],
-    
+
     // Performance Monitoring
     tracesSampleRate: 0.2, // 20% das transações
     replaysSessionSampleRate: 0.1, // 10% das sessões
     replaysOnErrorSampleRate: 1.0, // 100% dos erros
-    
+
     environment: environment,
     release: `all-max-mind@${appVersion}`,
-    
-    beforeSend(event) {
+
+    // Sourcemap configuration
+    attachStacktrace: true,
+    maxValueLength: 1000,
+
+    beforeSend(event, hint) {
       // Filtrar eventos sensíveis
       if (event.request?.url?.includes('password') || event.request?.url?.includes('token')) {
         return null;
       }
-      
+
       // Anonimizar dados do usuário
       if (event.user) {
         event.user = {
@@ -54,7 +58,7 @@ export const initSentry = () => {
           ip_address: undefined
         };
       }
-      
+
       return event;
     }
   });
