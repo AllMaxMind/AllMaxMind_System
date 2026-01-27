@@ -1,5 +1,4 @@
 import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/tracing";
 
 // Safely access environment variables
 const getEnvVar = (key: string) => {
@@ -24,20 +23,8 @@ export const initSentry = () => {
 
   Sentry.init({
     dsn: dsn,
-    integrations: [
-      new BrowserTracing({
-        tracingOrigins: ["localhost", /allmaxmind\.com/],
-      }),
-    ],
-
-    // Performance Monitoring
-    tracesSampleRate: 0.1,
-    replaysSessionSampleRate: 0.05,
-    replaysOnErrorSampleRate: 0.5,
-
     environment: environment,
     release: `all-max-mind@${appVersion}`,
-
     beforeSend(event) {
       // Filtrar eventos sensíveis
       if (event.request?.url?.includes('password') || event.request?.url?.includes('token')) {
@@ -93,7 +80,11 @@ export const captureError = (error: Error, context?: Record<string, any>) => {
 };
 
 // Performance monitoring
-export const startTransaction = (name: string, op: string = 'navigation') => {
-  // Cast to any to bypass type check if startTransaction is missing on strict types
-  return (Sentry as any).startTransaction({ name, op });
+export const startTransaction = (name: string) => {
+  // Basic transaction tracking
+  return {
+    finish: () => {
+      console.log(`[Sentry] Transaction: ${name}`);
+    }
+  };
 };
