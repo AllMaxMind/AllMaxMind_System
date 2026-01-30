@@ -11,7 +11,19 @@
       "Bash(npm run build:*)",
       "Bash(npx eslint:*)",
       "Bash(npm run test:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npm run:*)",
+      "Bash(npm test)",
+      "Bash(dir \"C:\\\\Users\\\\adria\\\\codes\\\\All_Max_Mind_System\\\\supabase\\\\functions\\\\analyze-problem\"\")",
+      "Bash(node scripts/test-complete-flow.js:*)",
+      "Bash(ls:*)",
+      "Bash(dir /B \"C:\\\\Users\\\\adria\\\\codes\\\\All_Max_Mind_System\\\\src\")",
+      "Bash(supabase functions deploy:*)",
+      "Bash(npx supabase functions deploy:*)",
+      "Bash(npx supabase secrets set:*)",
+      "Bash(node:*)",
+      "WebSearch",
+      "Bash(npx tsc:*)"
     ]
   }
 }

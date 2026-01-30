@@ -1,31 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Check, 
-  FileText, 
-  Calendar, 
-  DollarSign, 
-  Lock, 
-  Zap, 
-  CheckCircle, 
-  MessageCircle, 
-  Mail, 
-  Phone, 
-  Download, 
-  Shield, 
-  Clock, 
+import { useTranslation } from 'react-i18next';
+import {
+  Check,
+  FileText,
+  Calendar,
+  DollarSign,
+  Lock,
+  Zap,
+  CheckCircle,
+  MessageCircle,
+  Mail,
+  Phone,
+  Download,
+  Shield,
+  Clock,
   Users,
   Target,
   Layers,
   AlertTriangle,
   ArrowRight
 } from 'lucide-react';
-import { supabase } from '../../lib/supabaseClient';
 import { DimensionSelection } from '../../lib/supabase/dimensions';
 import { QuestionAnswer } from '../../lib/supabase/answers';
 import { generateTechnicalBlueprint, Blueprint } from '../../lib/ai/blueprint';
 import { saveLeadToSupabase, validateLeadForm, sendConfirmationEmail } from '../../lib/leads/manager';
 import { analytics } from '../../lib/analytics';
 import { useToast } from '../ui/Toast';
+import { useAuth } from '../../contexts/AuthContext';
 import LoadingSpinner from '../ui/LoadingSpinner';
 
 interface Phase4Props { 
@@ -132,16 +133,18 @@ const FullBlueprintContent: React.FC<{ blueprint: Blueprint }> = ({ blueprint })
   </div>
 );
 
-const Phase4: React.FC<Phase4Props> = ({ 
-  problemId, 
-  problemText, 
-  dimensions, 
-  questionsAnswers, 
+const Phase4: React.FC<Phase4Props> = ({
+  problemId,
+  problemText,
+  dimensions,
+  questionsAnswers,
   complexity,
   onLeadCaptured
 }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { t, i18n } = useTranslation('phase4');
+  const { user, isAuthenticated, signInWithGoogle, signInWithMagicLink, loading: authLoading } = useAuth();
   const [showFullBlueprint, setShowFullBlueprint] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [leadForm, setLeadForm] = useState({
     name: '',
     email: '',
@@ -181,33 +184,33 @@ const Phase4: React.FC<Phase4Props> = ({
   };
 
   const handleLogin = async (method: 'google' | 'email') => {
-    if (!supabase.auth) {
-         toast.info("Autenticação não configurada neste ambiente de demo.");
-         return;
-    }
+    setIsLoggingIn(true);
+
     try {
       if (method === 'google') {
-        await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: `${window.location.origin}/callback`
-          }
-        });
+        await signInWithGoogle();
+        // Redirect happens automatically
       } else {
         // Magic Link
-        const { error } = await supabase.auth.signInWithOtp({
-          email: leadForm.email,
-          options: {
-            emailRedirectTo: `${window.location.origin}/callback`
-          }
-        });
-        if (error) throw error;
-        
-        toast.success('Link de acesso enviado para seu email!');
+        if (!leadForm.email) {
+          toast.error('Preencha seu email primeiro');
+          setIsLoggingIn(false);
+          return;
+        }
+
+        const result = await signInWithMagicLink(leadForm.email);
+
+        if (result.success) {
+          toast.success('Link de acesso enviado! Verifique seu email.');
+        } else {
+          toast.error(result.error || 'Erro ao enviar magic link');
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('[Phase4] Login error:', error);
-      toast.error('Erro no login. Tente novamente.');
+      toast.error(error.message || 'Erro no login. Tente novamente.');
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -511,59 +514,59 @@ const Phase4: React.FC<Phase4Props> = ({
             <form onSubmit={handleLeadSubmit} className="space-y-4">
               {/* Name */}
               <div>
-                <label className="block text-xs font-medium mb-1.5 text-ds-text-tertiary uppercase tracking-wider">Nome completo *</label>
+                <label className="block text-xs font-medium mb-1.5 text-ds-text-tertiary uppercase tracking-wider">{t('form.fields.name.label')} *</label>
                 <input
                   type="text"
                   value={leadForm.name}
                   onChange={(e) => setLeadForm({...leadForm, name: e.target.value})}
                   className="input-field py-2.5 text-sm"
-                  placeholder="João Silva"
+                  placeholder={t('form.fields.name.placeholder')}
                   required
                 />
               </div>
 
               {/* Email */}
               <div>
-                <label className="block text-xs font-medium mb-1.5 text-ds-text-tertiary uppercase tracking-wider">Email corporativo *</label>
+                <label className="block text-xs font-medium mb-1.5 text-ds-text-tertiary uppercase tracking-wider">{t('form.fields.email.label')} *</label>
                 <input
                   type="email"
                   value={leadForm.email}
                   onChange={(e) => setLeadForm({...leadForm, email: e.target.value})}
                   className="input-field py-2.5 text-sm"
-                  placeholder="joao@empresa.com"
+                  placeholder={t('form.fields.email.placeholder')}
                   required
                 />
               </div>
 
               {/* Company */}
               <div>
-                <label className="block text-xs font-medium mb-1.5 text-ds-text-tertiary uppercase tracking-wider">Empresa *</label>
+                <label className="block text-xs font-medium mb-1.5 text-ds-text-tertiary uppercase tracking-wider">{t('form.fields.company.label')} *</label>
                 <input
                   type="text"
                   value={leadForm.company}
                   onChange={(e) => setLeadForm({...leadForm, company: e.target.value})}
                   className="input-field py-2.5 text-sm"
-                  placeholder="Sua empresa"
+                  placeholder={t('form.fields.company.placeholder')}
                   required
                 />
               </div>
 
               {/* Phone */}
               <div>
-                <label className="block text-xs font-medium mb-1.5 text-ds-text-tertiary uppercase tracking-wider">Telefone/WhatsApp *</label>
+                <label className="block text-xs font-medium mb-1.5 text-ds-text-tertiary uppercase tracking-wider">{t('form.fields.phone.label')} *</label>
                 <input
                   type="tel"
                   value={leadForm.phone}
                   onChange={(e) => setLeadForm({...leadForm, phone: e.target.value})}
                   className="input-field py-2.5 text-sm"
-                  placeholder="(11) 99999-9999"
+                  placeholder={t('form.fields.phone.placeholder')}
                   required
                 />
               </div>
 
               {/* Job Title */}
               <div>
-                <label className="block text-xs font-medium mb-1.5 text-ds-text-tertiary uppercase tracking-wider">Cargo</label>
+                <label className="block text-xs font-medium mb-1.5 text-ds-text-tertiary uppercase tracking-wider">{t('form.fields.job_title.label')}</label>
                 <select
                   value={leadForm.jobTitle}
                   onChange={(e) => setLeadForm({...leadForm, jobTitle: e.target.value})}
@@ -579,7 +582,7 @@ const Phase4: React.FC<Phase4Props> = ({
 
               {/* Contact Preference */}
               <div>
-                <label className="block text-xs font-medium mb-2 text-ds-text-tertiary uppercase tracking-wider">Prefiro contato por:</label>
+                <label className="block text-xs font-medium mb-2 text-ds-text-tertiary uppercase tracking-wider">{t('form.fields.contact_preference.label')}</label>
                 <div className="grid grid-cols-3 gap-2">
                   {[
                     { value: 'whatsapp', label: 'WhatsApp', icon: MessageCircle },
@@ -615,7 +618,7 @@ const Phase4: React.FC<Phase4Props> = ({
                     required
                   />
                   <label htmlFor="terms" className="text-xs text-ds-text-secondary cursor-pointer">
-                    Concordo com os <a href="#" className="text-ds-primary-400 hover:underline">Termos de Uso</a> e <a href="#" className="text-ds-primary-400 hover:underline">Política de Privacidade</a> *
+                    {t('form.consent.terms')} <a href="#" className="text-ds-primary-400 hover:underline">*</a>
                   </label>
                 </div>
 
@@ -628,7 +631,7 @@ const Phase4: React.FC<Phase4Props> = ({
                     className="mt-1 rounded border-ds-border bg-ds-surface text-ds-primary-500 focus:ring-ds-primary-500/50"
                   />
                   <label htmlFor="marketing" className="text-xs text-ds-text-secondary cursor-pointer">
-                    Aceito receber novidades e ofertas da ALL MAX MIND
+                    {t('form.consent.marketing')}
                   </label>
                 </div>
               </div>
@@ -644,12 +647,12 @@ const Phase4: React.FC<Phase4Props> = ({
                 {isSubmitting ? (
                   <span className="flex items-center justify-center gap-2">
                     <LoadingSpinner size="sm" className="text-white" />
-                    Processando...
+                    {t('form.buttons.submitting')}
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
                     <Download className="w-5 h-5" />
-                    BAIXAR BLUEPRINT COMPLETO
+                    {t('form.buttons.submit')}
                   </span>
                 )}
               </button>
@@ -688,22 +691,31 @@ const Phase4: React.FC<Phase4Props> = ({
           <div className="flex justify-center gap-3">
             <button
               onClick={() => handleLogin('google')}
-              className="flex items-center gap-2 px-5 py-2 bg-white text-gray-800 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium shadow-lg shadow-white/5"
+              disabled={isLoggingIn || authLoading}
+              className="flex items-center gap-2 px-5 py-2 bg-white text-gray-800 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium shadow-lg shadow-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-               {/* Simple Google G icon SVG */}
-               <svg className="w-4 h-4" viewBox="0 0 24 24">
-                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.84z" />
-                 <path fill="#EA4335" d="M12 4.36c1.61 0 3.06.56 4.21 1.64l3.16-3.16C17.45 1.05 14.97 0 12 0 7.7 0 3.99 2.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-               </svg>
+               {isLoggingIn ? (
+                 <LoadingSpinner size="sm" className="text-gray-800" />
+               ) : (
+                 <svg className="w-4 h-4" viewBox="0 0 24 24">
+                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.84z" />
+                   <path fill="#EA4335" d="M12 4.36c1.61 0 3.06.56 4.21 1.64l3.16-3.16C17.45 1.05 14.97 0 12 0 7.7 0 3.99 2.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                 </svg>
+               )}
               Google
             </button>
             <button
               onClick={() => handleLogin('email')}
-              className="flex items-center gap-2 px-5 py-2 bg-ds-surface border border-ds-border text-ds-text-primary rounded-lg hover:bg-ds-card transition-colors text-sm font-medium"
+              disabled={isLoggingIn || authLoading}
+              className="flex items-center gap-2 px-5 py-2 bg-ds-surface border border-ds-border text-ds-text-primary rounded-lg hover:bg-ds-card transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Mail className="w-4 h-4" />
+              {isLoggingIn ? (
+                <LoadingSpinner size="sm" />
+              ) : (
+                <Mail className="w-4 h-4" />
+              )}
               Magic Link
             </button>
           </div>

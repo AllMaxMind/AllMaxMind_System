@@ -1,0 +1,75 @@
+{
+  "title": "Your Blueprint Preview",
+  "subtitle": "Get full access by providing your contact info",
+  "blueprint": {
+    "loading": "Generating your customized blueprint...",
+    "error": "Failed to generate blueprint. Please try again.",
+    "sections": {
+      "objectives": "Objectives",
+      "architecture": "Architecture",
+      "timeline": "Timeline",
+      "investment": "Investment Estimate"
+    },
+    "disclaimer": "This is a preliminary estimate. Final proposal may vary based on detailed analysis.",
+    "offer": "Full blueprint navigable in 7 business days"
+  },
+  "form": {
+    "title": "Get Full Access",
+    "fields": {
+      "name": {
+        "label": "Full Name",
+        "placeholder": "John Doe"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "john@company.com"
+      },
+      "company": {
+        "label": "Company",
+        "placeholder": "Company Name"
+      },
+      "phone": {
+        "label": "Phone",
+        "placeholder": "+1 (555) 123-4567"
+      },
+      "job_title": {
+        "label": "Job Title",
+        "placeholder": "CTO, VP Operations, etc."
+      },
+      "contact_preference": {
+        "label": "Preferred Contact Method",
+        "options": {
+          "email": "Email",
+          "phone": "Phone",
+          "whatsapp": "WhatsApp"
+        }
+      },
+      "project_size": {
+        "label": "Project Size",
+        "options": {
+          "small": "Small (< $50k)",
+          "medium": "Medium ($50k-$200k)",
+          "large": "Large (> $200k)"
+        }
+      }
+    },
+    "consent": {
+      "terms": "I accept the terms and conditions",
+      "marketing": "I agree to receive marketing communications"
+    },
+    "buttons": {
+      "submit": "Get Full Blueprint",
+      "submitting": "Submitting..."
+    }
+  },
+  "success": {
+    "title": "Success!",
+    "message": "Check your email for the full blueprint and magic link.",
+    "email_sent": "We sent a confirmation to {{email}}"
+  },
+  "errors": {
+    "rate_limit": "Please wait 5 minutes between submissions",
+    "validation": "Please fill all required fields",
+    "network": "Network error. Please try again."
+  }
+}

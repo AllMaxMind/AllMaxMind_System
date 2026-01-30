@@ -1,0 +1,24 @@
+{
+  "lead_confirmation": {
+    "subject": "Your Blueprint is Ready! 🚀",
+    "greeting": "Hi {{name}},",
+    "body": "Thank you for using All Max Mind System!",
+    "blueprint_ready": "Your customized blueprint has been generated successfully.",
+    "access_blueprint": "Access your blueprint:",
+    "magic_link": "Login with Magic Link:",
+    "disclaimer": "This blueprint will be archived in 7 days.",
+    "questions": "Questions? Reply to this email.",
+    "footer": "All Max Mind System"
+  },
+  "blueprint_delivery": {
+    "subject": "{{company}} - Customized Blueprint",
+    "greeting": "Hi {{name}},",
+    "body": "Your customized blueprint is attached.",
+    "next_steps": "Next steps:",
+    "step1": "Review objectives and architecture",
+    "step2": "Validate timeline and investment",
+    "step3": "Schedule alignment call",
+    "contact": "Contact: hello@allmaxmind.com",
+    "footer": "All Max Mind System"
+  }
+}

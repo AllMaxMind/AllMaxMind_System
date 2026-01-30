@@ -3,8 +3,7 @@ import { AlertCircle, Users, RefreshCw, Target, Brain, Shield } from 'lucide-rea
 import Button from '../Button';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import Tooltip from '../ui/Tooltip';
-import { processProblemText } from '../../lib/ai/processor';
-import { saveProblemToSupabase } from '../../lib/supabase/problems';
+import { createProblemRecord, analyzeProblemWithEdgeFunction, saveProblemToSupabase } from '../../lib/supabase/problems';
 import { validateProblemText, checkRateLimit } from '../../lib/validation/problem';
 import { analytics } from '../../lib/analytics';
 import { useToast } from '../ui/Toast';
@@ -83,35 +82,29 @@ const Phase1: React.FC<Phase1Props> = ({ onComplete, initialText = '' }) => {
 
     setIsProcessing(true);
     try {
-      // 3. Processamento NLP básico
-      const analysis = await processProblemText(problemText);
-      
-      // 4. Salvar no Supabase
-      const problemId = await saveProblemToSupabase({
-        raw_text: problemText,
-        processed_text: analysis.processedText,
-        domain: analysis.domain,
-        persona: analysis.persona,
-        intent_score: analysis.intentScore,
-        metadata: analysis.metadata
-      });
+      // 3. Criar registro no banco PRIMEIRO (recebe UUID real)
+      const problemId = await createProblemRecord(problemText);
+
+      // 4. Processamento NLP via Edge Function (com UUID real)
+      const analysis = await analyzeProblemWithEdgeFunction(problemText, problemId);
 
       // 5. Track analytics
       analytics.trackEvent('problem_processed', {
         problem_length: problemText.length,
         domain: analysis.domain,
         intent_score: analysis.intentScore,
-        processing_time: analysis.processingTime
+        emotional_tone: analysis.emotionalTone,
+        complexity: analysis.complexity
       });
 
       toast.success('Análise concluída! Vamos para o próximo passo.');
-      
+
       // 6. Avançar para Fase 2
       // Small delay for UX to show success state
       setTimeout(() => {
         onComplete(problemId);
       }, 1000);
-      
+
     } catch (error) {
       console.error('[Phase1] Error processing problem:', error);
       toast.error('Erro ao processar. Tente novamente.');

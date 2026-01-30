@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Brain, 
-  HelpCircle, 
-  Info, 
-  ChevronLeft, 
-  ChevronRight, 
-  Check, 
+import { useTranslation } from 'react-i18next';
+import {
+  Brain,
+  HelpCircle,
+  Info,
+  ChevronLeft,
+  ChevronRight,
+  Check,
   AlertTriangle,
   MessageSquare
 } from 'lucide-react';
@@ -23,13 +24,14 @@ interface Phase3Props {
   onComplete: (answers: QuestionAnswer[], finalComplexity: 'small' | 'medium' | 'large') => void;
 }
 
-const Phase3: React.FC<Phase3Props> = ({ 
-  problemId, 
-  problemText, 
-  dimensions, 
-  intentScore, 
-  onComplete 
+const Phase3: React.FC<Phase3Props> = ({
+  problemId,
+  problemText,
+  dimensions,
+  intentScore,
+  onComplete
 }) => {
+  const { i18n } = useTranslation('phase3');
   const [questions, setQuestions] = useState<AdaptiveQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -57,13 +59,14 @@ const Phase3: React.FC<Phase3Props> = ({
 
   const generateAdaptiveQuestions = async () => {
     setIsGenerating(true);
-    
+
     try {
       const generatedQuestions = await adaptiveQuestionEngine.generate({
         problemText,
         dimensions,
         intentScore,
-        previousAnswers: [] // Primeira rodada
+        previousAnswers: [], // Primeira rodada
+        language: i18n.language
       });
       
       setQuestions(generatedQuestions);

@@ -2,97 +2,84 @@ import { supabase } from '../supabaseClient';
 
 export interface ProblemData {
   raw_text: string;
-  processed_text: string;
-  domain: string;
-  persona: string;
-  intent_score: number;
-  metadata: Record<string, any>;
 }
 
-export const saveProblemToSupabase = async (problem: ProblemData): Promise<string> => {
+interface ProblemAnalysisResponse {
+  domain: string;
+  persona: string;
+  intentScore: number;
+  emotionalTone: string;
+  complexity: string;
+  processedText: string;
+  keywords: string[];
+  embedding: number[];
+}
+
+export const analyzeProblemWithEdgeFunction = async (
+  problemText: string,
+  problemId: string
+): Promise<ProblemAnalysisResponse> => {
   try {
-    const visitorId = localStorage.getItem('am_visitor_id');
-    const sessionId = sessionStorage.getItem('am_session_id');
+    console.log('[Phase1] Calling analyze-problem Edge Function for NLP...');
+    console.log('[Phase1] Using problemId:', problemId);
 
-    // 1. Salvar problema principal
-    const { data: problemData, error: problemError } = await supabase
-      .from('problems')
-      .insert([{
-        visitor_id: visitorId,
-        session_id: sessionId,
-        raw_text: problem.raw_text,
-        processed_text: problem.processed_text,
-        domain: problem.domain,
-        persona: problem.persona,
-        intent_score: problem.intent_score,
-        metadata: problem.metadata,
-        created_at: new Date().toISOString()
-      }])
-      .select('id')
-      .single();
+    const { data, error } = await supabase.functions.invoke('analyze-problem', {
+      body: {
+        problemText: problemText,
+        problemId: problemId
+      }
+    });
 
-    if (problemError) throw problemError;
-    if (!problemData) throw new Error("Insert failed: No data returned from Supabase");
+    if (error) throw error;
+    if (!data) throw new Error('No response from analyze-problem function');
 
-    // 2. Gerar embedding (simplificado - na prática usar Supabase Vector ou API)
-    const embedding = generateBasicEmbedding(problem.raw_text);
-    
-    // Tentativa de salvar embedding (pode falhar se tabela não existir ainda)
-    const { error: embeddingError } = await supabase
-      .from('problem_embeddings')
-      .insert([{
-        problem_id: problemData.id,
-        embedding: embedding,
-        created_at: new Date().toISOString()
-      }]);
-
-    if (embeddingError) {
-      console.warn('[Phase1] Embedding save warning (tables might be missing):', embeddingError.message);
-      // Não falhar se embedding falhar, pois o problema foi salvo
-    }
-
-    return problemData.id;
+    return data as ProblemAnalysisResponse;
   } catch (error) {
-    console.error('[Phase1] Error saving to Supabase:', error);
-    
-    // Fallback: salvar localmente se Supabase falhar ou estiver offline
-    const fallbackId = `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    const localData = {
-      ...problem,
-      id: fallbackId,
-      saved_locally: true,
-      timestamp: new Date().toISOString()
-    };
-    
-    try {
-        localStorage.setItem(`problem_${fallbackId}`, JSON.stringify(localData));
-        // Also keep a list of local problems
-        const list = JSON.parse(localStorage.getItem('am_local_problems') || '[]');
-        list.push(fallbackId);
-        localStorage.setItem('am_local_problems', JSON.stringify(list));
-    } catch (e) {
-        console.error('Local storage full or disabled', e);
-    }
-    
-    return fallbackId;
+    console.error('[Phase1] Error calling analyze-problem Edge Function:', error);
+    throw error;
   }
 };
 
-// Função auxiliar para embedding básico (simplificado)
-// Em produção, isso seria substituído por uma chamada real à API de embeddings (Gemini/OpenAI)
-const generateBasicEmbedding = (text: string): number[] => {
-  const embedding = new Array(384).fill(0);
-  const words = text.toLowerCase().split(/\s+/).slice(0, 50);
-  
-  // Simulação básica de embedding determinístico para testes
-  words.forEach((word, index) => {
-    if (index < embedding.length) {
-      // Gera um valor baseado nos códigos de char para simular vetor
-      let val = 0;
-      for (let i = 0; i < word.length; i++) val += word.charCodeAt(i);
-      embedding[index] = (val % 100) / 100; 
-    }
-  });
-  
-  return embedding;
+// Cria o problema no banco ANTES de chamar a Edge Function
+export const createProblemRecord = async (
+  problemText: string
+): Promise<string> => {
+  const visitorId = localStorage.getItem('am_visitor_id');
+  const sessionId = sessionStorage.getItem('am_session_id');
+
+  console.log('[Phase1] Creating problem record in Supabase...');
+
+  const { data, error } = await supabase
+    .from('problems')
+    .insert([{
+      visitor_id: visitorId,
+      session_id: sessionId,
+      raw_text: problemText,
+      analysis_completed: false,
+      created_at: new Date().toISOString()
+    }])
+    .select('id')
+    .single();
+
+  if (error) throw error;
+  if (!data) throw new Error("Insert failed: No data returned from Supabase");
+
+  console.log('[Phase1] ✅ Problem record created with ID:', data.id);
+  return data.id;
+};
+
+// Função mantida para compatibilidade - agora apenas retorna o ID já existente
+export const saveProblemToSupabase = async (
+  problemId: string,
+  analysis: ProblemAnalysisResponse
+): Promise<string> => {
+  try {
+    console.log('[Phase1] Problem already saved and analyzed. ID:', problemId);
+
+    // Embedding já foi salvo pela Edge Function, apenas retorna o ID
+    return problemId;
+  } catch (error) {
+    console.error('[Phase1] Error in saveProblemToSupabase:', error);
+    throw error;
+  }
 };

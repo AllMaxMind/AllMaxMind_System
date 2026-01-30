@@ -1,0 +1,60 @@
+{
+  "title": "Select Dimensions",
+  "subtitle": "Help us understand the scope of your problem",
+  "dimensions": {
+    "technical_impact": {
+      "label": "Technical Impact",
+      "description": "How technically complex is the solution?",
+      "options": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "critical": "Critical"
+      }
+    },
+    "business_scope": {
+      "label": "Business Scope",
+      "description": "What's the geographical reach?",
+      "options": {
+        "local": "Local",
+        "regional": "Regional",
+        "global": "Global",
+        "enterprise": "Enterprise"
+      }
+    },
+    "resource_constraint": {
+      "label": "Resource Constraint",
+      "description": "What resources are available?",
+      "options": {
+        "minimal": "Minimal",
+        "moderate": "Moderate",
+        "significant": "Significant",
+        "unlimited": "Unlimited"
+      }
+    },
+    "urgency": {
+      "label": "Urgency",
+      "description": "How urgent is this problem?",
+      "options": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "critical": "Critical"
+      }
+    },
+    "complexity": {
+      "label": "Complexity",
+      "description": "Overall problem complexity",
+      "options": {
+        "simple": "Simple",
+        "moderate": "Moderate",
+        "complex": "Complex",
+        "extremely_complex": "Extremely Complex"
+      }
+    }
+  },
+  "buttons": {
+    "back": "Back",
+    "next": "Next"
+  }
+}

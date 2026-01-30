@@ -1,0 +1,60 @@
+{
+  "title": "Selecione as Dimensões",
+  "subtitle": "Ajude-nos a entender o escopo do seu problema",
+  "dimensions": {
+    "technical_impact": {
+      "label": "Impacto Técnico",
+      "description": "Qual a complexidade técnica da solução?",
+      "options": {
+        "low": "Baixo",
+        "medium": "Médio",
+        "high": "Alto",
+        "critical": "Crítico"
+      }
+    },
+    "business_scope": {
+      "label": "Escopo de Negócio",
+      "description": "Qual o alcance geográfico?",
+      "options": {
+        "local": "Local",
+        "regional": "Regional",
+        "global": "Global",
+        "enterprise": "Corporativo"
+      }
+    },
+    "resource_constraint": {
+      "label": "Restrição de Recursos",
+      "description": "Quais recursos estão disponíveis?",
+      "options": {
+        "minimal": "Mínimo",
+        "moderate": "Moderado",
+        "significant": "Significativo",
+        "unlimited": "Ilimitado"
+      }
+    },
+    "urgency": {
+      "label": "Urgência",
+      "description": "Quão urgente é este problema?",
+      "options": {
+        "low": "Baixa",
+        "medium": "Média",
+        "high": "Alta",
+        "critical": "Crítica"
+      }
+    },
+    "complexity": {
+      "label": "Complexidade",
+      "description": "Complexidade geral do problema",
+      "options": {
+        "simple": "Simples",
+        "moderate": "Moderada",
+        "complex": "Complexa",
+        "extremely_complex": "Extremamente Complexa"
+      }
+    }
+  },
+  "buttons": {
+    "back": "Voltar",
+    "next": "Próximo"
+  }
+}

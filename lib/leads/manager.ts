@@ -1,4 +1,5 @@
 import { supabase } from '../supabaseClient';
+import { sendEmail } from '../email/service';
 
 interface LeadData {
   problemId: string;
@@ -33,12 +34,18 @@ export const saveLeadToSupabase = async (leadData: LeadData): Promise<string> =>
   try {
     // Calcular lead score
     const leadScore = calculateLeadScore(leadData);
-    
+
+    // Validar se blueprintId é um UUID válido (não aceita IDs temporários)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const validBlueprintId = leadData.blueprintId && uuidRegex.test(leadData.blueprintId)
+      ? leadData.blueprintId
+      : null;
+
     // Inserir lead
     const { data, error } = await supabase
       .from('leads')
       .insert([{
-        blueprint_id: leadData.blueprintId,
+        blueprint_id: validBlueprintId,
         user_email: leadData.email,
         user_name: leadData.name,
         company_name: leadData.company,
@@ -65,6 +72,37 @@ export const saveLeadToSupabase = async (leadData: LeadData): Promise<string> =>
       .single();
 
     if (error) throw error;
+
+    // Enviar email de confirmação (non-blocking)
+    if (data?.id) {
+      try {
+        const emailResult = await sendEmail({
+          to: leadData.email,
+          templateType: 'lead-confirmation',
+          data: {
+            name: leadData.name,
+            company: leadData.company,
+            blueprintUrl: `${typeof window !== 'undefined' ? window.location.origin : ''}/blueprint/${validBlueprintId || 'preview'}`,
+            magicLinkUrl: `${typeof window !== 'undefined' ? window.location.origin : ''}/auth/magic-link`,
+          },
+        });
+
+        if (!emailResult.success) {
+          console.warn('[Leads] Email failed but lead saved:', emailResult.error);
+          // Ainda assim registrar evento GA4
+          if (typeof window !== 'undefined' && (window as any).dataLayer) {
+            (window as any).dataLayer.push({
+              event: 'email_send_failed',
+              lead_id: data.id,
+              error: emailResult.error,
+            });
+          }
+        }
+      } catch (emailError: any) {
+        console.error('[Leads] Email error (non-blocking):', emailError);
+        // Não falhar o lead se email falhar - lead já foi salvo
+      }
+    }
 
     // Criar evento no analytics (se window.dataLayer existir)
     if (typeof window !== 'undefined' && (window as any).dataLayer) {

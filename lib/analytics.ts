@@ -29,7 +29,10 @@ class AnalyticsService {
 
   constructor() {
     this.visitorTracker = new VisitorTracker();
-    this.sessionManager = new SessionManager();
+    this.sessionManager = new SessionManager(
+      this.visitorTracker.getVisitorId(),
+      this.visitorTracker.getSessionId()
+    );
     this.googleAnalytics = new GoogleAnalytics();
     
     this.performanceMonitor = new PerformanceMonitor((metric, value, rating) => {

@@ -1,0 +1,15 @@
+{
+  "appTitle": "All Max Mind System",
+  "buttons": {
+    "start": "Começar",
+    "back": "Voltar",
+    "next": "Próximo",
+    "submit": "Enviar",
+    "loading": "Carregando..."
+  },
+  "errors": {
+    "generic": "Ocorreu um erro. Tente novamente.",
+    "network": "Erro de conexão. Tente novamente.",
+    "validation": "Por favor verifique suas informações e tente novamente."
+  }
+}

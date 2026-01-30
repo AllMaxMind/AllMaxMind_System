@@ -1,0 +1,21 @@
+{
+  "title": "Answer Questions",
+  "subtitle": "Help us refine your blueprint",
+  "loading": "Generating adaptive questions...",
+  "error": "Failed to generate questions. Please try again.",
+  "categories": {
+    "context": "Context",
+    "process": "Process",
+    "pain": "Pain Points",
+    "technical": "Technical",
+    "scale": "Scale"
+  },
+  "placeholders": {
+    "answer": "Type your answer here..."
+  },
+  "buttons": {
+    "back": "Back",
+    "next": "Generate Blueprint"
+  },
+  "progress": "Question {{current}} of {{total}}"
+}

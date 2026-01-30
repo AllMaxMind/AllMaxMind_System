@@ -1,0 +1,21 @@
+{
+  "title": "Responda as Perguntas",
+  "subtitle": "Ajude-nos a refinar seu blueprint",
+  "loading": "Gerando perguntas adaptativas...",
+  "error": "Falha ao gerar perguntas. Tente novamente.",
+  "categories": {
+    "context": "Contexto",
+    "process": "Processo",
+    "pain": "Pontos de Dor",
+    "technical": "Técnico",
+    "scale": "Escala"
+  },
+  "placeholders": {
+    "answer": "Digite sua resposta aqui..."
+  },
+  "buttons": {
+    "back": "Voltar",
+    "next": "Gerar Blueprint"
+  },
+  "progress": "Pergunta {{current}} de {{total}}"
+}

@@ -8,6 +8,7 @@ import Phase4 from './components/phases/Phase4';
 import CookieConsent from './components/analytics/CookieConsent';
 import { analytics, AnalyticsEvents } from './lib/analytics';
 import { ToastProvider } from './components/ui/Toast';
+import { AuthProvider } from './contexts/AuthContext';
 import { DimensionSelection } from './lib/supabase/dimensions';
 import { QuestionAnswer } from './lib/supabase/answers';
 
@@ -168,12 +169,14 @@ const App: React.FC = () => {
   };
 
   return (
-    <ToastProvider>
-      <main className="bg-ds-bg min-h-screen text-ds-text-primary selection:bg-ds-primary-500/30">
-        {renderStage()}
-        <CookieConsent />
-      </main>
-    </ToastProvider>
+    <AuthProvider>
+      <ToastProvider>
+        <main className="bg-ds-bg min-h-screen text-ds-text-primary selection:bg-ds-primary-500/30">
+          {renderStage()}
+          <CookieConsent />
+        </main>
+      </ToastProvider>
+    </AuthProvider>
   );
 };
 

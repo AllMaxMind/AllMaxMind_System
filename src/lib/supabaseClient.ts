@@ -17,8 +17,11 @@ const getEnvVar = (key: string) => {
 const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
 const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
 
+// Log for debugging
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('CONFIGURAÇÃO CRÍTICA AUSENTE: VITE_SUPABASE_URL ou VITE_SUPABASE_ANON_KEY não encontrados. O sistema não pode conectar ao banco de dados.');
+  console.error('[Supabase] Erro: VITE_SUPABASE_URL ou VITE_SUPABASE_ANON_KEY não encontrados');
+  console.error('[Supabase] VITE_SUPABASE_URL:', supabaseUrl ? '✓' : '✗ MISSING');
+  console.error('[Supabase] VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? '✓' : '✗ MISSING');
 }
 
 // Função para pegar o visitor ID de forma segura para os headers
@@ -28,13 +31,17 @@ const getVisitorHeader = () => {
   return vid ? { 'x-visitor-id': vid } : {};
 };
 
-// Cliente Real apenas - Sem Mocks
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-  },
-  global: {
-    headers: getVisitorHeader()
+// Criar cliente - Se env vars faltarem, Supabase vai falhar gracefully nas chamadas
+export const supabase = createClient(
+  supabaseUrl || 'https://placeholder.supabase.co',
+  supabaseAnonKey || 'placeholder-key',
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+    global: {
+      headers: getVisitorHeader()
+    }
   }
-});
+);

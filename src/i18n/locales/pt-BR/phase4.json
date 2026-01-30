@@ -1,0 +1,75 @@
+{
+  "title": "Preview do Seu Blueprint",
+  "subtitle": "Obtenha acesso completo fornecendo suas informações de contato",
+  "blueprint": {
+    "loading": "Gerando seu blueprint personalizado...",
+    "error": "Falha ao gerar blueprint. Tente novamente.",
+    "sections": {
+      "objectives": "Objetivos",
+      "architecture": "Arquitetura",
+      "timeline": "Cronograma",
+      "investment": "Estimativa de Investimento"
+    },
+    "disclaimer": "Esta é uma estimativa preliminar. A proposta final pode variar baseada em análise detalhada.",
+    "offer": "Blueprint completo navegável em 7 dias úteis"
+  },
+  "form": {
+    "title": "Obter Acesso Completo",
+    "fields": {
+      "name": {
+        "label": "Nome Completo",
+        "placeholder": "João Silva"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "joao@empresa.com"
+      },
+      "company": {
+        "label": "Empresa",
+        "placeholder": "Nome da Empresa"
+      },
+      "phone": {
+        "label": "Telefone",
+        "placeholder": "+55 (11) 98765-4321"
+      },
+      "job_title": {
+        "label": "Cargo",
+        "placeholder": "CTO, VP Operações, etc."
+      },
+      "contact_preference": {
+        "label": "Método de Contato Preferido",
+        "options": {
+          "email": "Email",
+          "phone": "Telefone",
+          "whatsapp": "WhatsApp"
+        }
+      },
+      "project_size": {
+        "label": "Tamanho do Projeto",
+        "options": {
+          "small": "Pequeno (< R$ 250k)",
+          "medium": "Médio (R$ 250k-R$ 1M)",
+          "large": "Grande (> R$ 1M)"
+        }
+      }
+    },
+    "consent": {
+      "terms": "Aceito os termos e condições",
+      "marketing": "Concordo em receber comunicações de marketing"
+    },
+    "buttons": {
+      "submit": "Obter Blueprint Completo",
+      "submitting": "Enviando..."
+    }
+  },
+  "success": {
+    "title": "Sucesso!",
+    "message": "Verifique seu email para o blueprint completo e magic link.",
+    "email_sent": "Enviamos uma confirmação para {{email}}"
+  },
+  "errors": {
+    "rate_limit": "Aguarde 5 minutos entre envios",
+    "validation": "Por favor preencha todos os campos obrigatórios",
+    "network": "Erro de rede. Tente novamente."
+  }
+}
