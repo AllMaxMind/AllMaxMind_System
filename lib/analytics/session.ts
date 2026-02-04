@@ -118,12 +118,20 @@ export class SessionManager {
         .upsert(sessionRecord, { onConflict: 'session_id' });
 
       if (error) {
+        // Silently ignore AbortError - expected when component unmounts or page transitions
+        if (error.message?.includes('AbortError') || error.message?.includes('aborted')) {
+          return;
+        }
         console.warn('[Analytics] Could not persist session:', error.message);
       } else if (!this.hasPersistedSession) {
         console.log('[Analytics] ✅ Session persisted:', this.sessionId);
         this.hasPersistedSession = true;
       }
     } catch (error) {
+      // Silently ignore AbortError - expected when component unmounts or page transitions
+      if (error instanceof Error && (error.name === 'AbortError' || error.message?.includes('aborted'))) {
+        return;
+      }
       console.error('[Analytics] Error persisting session:', error);
       // Non-critical - continue anyway
     }

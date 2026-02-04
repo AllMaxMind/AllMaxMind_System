@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
-import { 
-  Repeat, 
-  TrendingDown, 
-  Building, 
-  Clock, 
-  Users, 
-  FileText, 
-  ChevronDown, 
-  Check, 
-  ChevronLeft, 
-  ChevronRight, 
+import { useTranslation } from 'react-i18next';
+import {
+  Repeat,
+  TrendingDown,
+  Building,
+  Clock,
+  Users,
+  FileText,
+  ChevronDown,
+  Check,
+  ChevronLeft,
+  ChevronRight,
   CheckCircle,
+  Brain,
   LucideIcon
 } from 'lucide-react';
 import Button from '../Button';
-import LoadingSpinner from '../ui/LoadingSpinner';
 import { saveDimensionsToSupabase, DimensionSelection } from '../../lib/supabase/dimensions';
 import { analytics } from '../../lib/analytics';
 import { useToast } from '../ui/Toast';
@@ -22,9 +23,9 @@ import { useToast } from '../ui/Toast';
 interface DimensionOption {
   id: string;
   label: string;
-  value: any;
+  value: string;
   description: string;
-  impactScore: number; // 1-10
+  impactScore: number;
 }
 
 interface Dimension {
@@ -37,19 +38,20 @@ interface Dimension {
   multiSelect: boolean;
 }
 
-interface Phase2Props { 
+interface Phase2Props {
   problemId: string;
   problemText: string;
   initialIntentScore: number;
   onComplete: (selections: DimensionSelection[], refinedIntentScore: number) => void;
 }
 
-const Phase2: React.FC<Phase2Props> = ({ 
-  problemId, 
-  problemText, 
+const Phase2: React.FC<Phase2Props> = ({
+  problemId,
+  problemText,
   initialIntentScore,
-  onComplete 
+  onComplete
 }) => {
+  const { t } = useTranslation('phase2');
   const [selections, setSelections] = useState<Record<string, string[]>>({});
   const [currentDimension, setCurrentDimension] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,78 +61,78 @@ const Phase2: React.FC<Phase2Props> = ({
   const dimensions: Dimension[] = [
     {
       id: 'frequency',
-      name: 'Frequência',
-      description: 'Com que frequência esse problema ocorre?',
+      name: t('dimensions.frequency.name', 'Frequency'),
+      description: t('dimensions.frequency.description', 'How often does this problem occur?'),
       icon: Repeat,
       options: [
-        { id: 'daily', label: 'Diariamente', value: 'daily', description: 'Ocorre todo dia, impacta operação contínua', impactScore: 9 },
-        { id: 'weekly', label: 'Semanalmente', value: 'weekly', description: 'Ocorre toda semana, planejamento necessário', impactScore: 7 },
-        { id: 'monthly', label: 'Mensalmente', value: 'monthly', description: 'Ocorre todo mês, cíclico', impactScore: 5 },
-        { id: 'quarterly', label: 'Trimestralmente', value: 'quarterly', description: 'Ocorre a cada trimestre, sazonal', impactScore: 3 },
-        { id: 'rarely', label: 'Raramente', value: 'rarely', description: 'Ocorre ocasionalmente, mas impacta quando acontece', impactScore: 6 }
+        { id: 'daily', label: t('dimensions.frequency.options.daily', 'Daily'), value: 'daily', description: t('dimensions.frequency.options.dailyDesc', 'Occurs every day, impacts continuous operation'), impactScore: 9 },
+        { id: 'weekly', label: t('dimensions.frequency.options.weekly', 'Weekly'), value: 'weekly', description: t('dimensions.frequency.options.weeklyDesc', 'Occurs every week, planning needed'), impactScore: 7 },
+        { id: 'monthly', label: t('dimensions.frequency.options.monthly', 'Monthly'), value: 'monthly', description: t('dimensions.frequency.options.monthlyDesc', 'Occurs every month, cyclical'), impactScore: 5 },
+        { id: 'quarterly', label: t('dimensions.frequency.options.quarterly', 'Quarterly'), value: 'quarterly', description: t('dimensions.frequency.options.quarterlyDesc', 'Occurs quarterly, seasonal'), impactScore: 3 },
+        { id: 'rarely', label: t('dimensions.frequency.options.rarely', 'Rarely'), value: 'rarely', description: t('dimensions.frequency.options.rarelyDesc', 'Occurs occasionally, but impacts when it happens'), impactScore: 6 }
       ],
       required: true,
       multiSelect: false
     },
     {
       id: 'impact',
-      name: 'Impacto',
-      description: 'Qual o impacto desse problema no negócio?',
+      name: t('dimensions.impact.name', 'Impact'),
+      description: t('dimensions.impact.description', 'What is the business impact of this problem?'),
       icon: TrendingDown,
       options: [
-        { id: 'critical', label: 'Crítico', value: 'critical', description: 'Para operação, gera multas/perdas financeiras significativas', impactScore: 10 },
-        { id: 'high', label: 'Alto', value: 'high', description: 'Impacta significativamente eficiência ou custos', impactScore: 8 },
-        { id: 'medium', label: 'Médio', value: 'medium', description: 'Causa atrasos ou custos adicionais moderados', impactScore: 6 },
-        { id: 'low', label: 'Baixo', value: 'low', description: 'Impacto limitado, mas gera trabalho manual', impactScore: 4 },
-        { id: 'nuisance', label: 'Inconveniente', value: 'nuisance', description: 'Apenas inconveniente, sem impacto financeiro direto', impactScore: 2 }
+        { id: 'critical', label: t('dimensions.impact.options.critical', 'Critical'), value: 'critical', description: t('dimensions.impact.options.criticalDesc', 'Stops operation, generates significant fines/losses'), impactScore: 10 },
+        { id: 'high', label: t('dimensions.impact.options.high', 'High'), value: 'high', description: t('dimensions.impact.options.highDesc', 'Significantly impacts efficiency or costs'), impactScore: 8 },
+        { id: 'medium', label: t('dimensions.impact.options.medium', 'Medium'), value: 'medium', description: t('dimensions.impact.options.mediumDesc', 'Causes moderate delays or additional costs'), impactScore: 6 },
+        { id: 'low', label: t('dimensions.impact.options.low', 'Low'), value: 'low', description: t('dimensions.impact.options.lowDesc', 'Limited impact, but generates manual work'), impactScore: 4 },
+        { id: 'nuisance', label: t('dimensions.impact.options.nuisance', 'Inconvenient'), value: 'nuisance', description: t('dimensions.impact.options.nuisanceDesc', 'Just inconvenient, no direct financial impact'), impactScore: 2 }
       ],
       required: true,
       multiSelect: false
     },
     {
       id: 'business_area',
-      name: 'Área de Negócio',
-      description: 'Qual área principal é afetada?',
+      name: t('dimensions.businessArea.name', 'Business Area'),
+      description: t('dimensions.businessArea.description', 'Which main area is affected?'),
       icon: Building,
       options: [
-        { id: 'logistics', label: 'Logística', value: 'logistics', description: 'Transporte, distribuição, fretes', impactScore: 7 },
-        { id: 'supply_chain', label: 'Supply Chain', value: 'supply_chain', description: 'Cadeia de suprimentos, estoques', impactScore: 8 },
-        { id: 'comex', label: 'COMEX', value: 'comex', description: 'Comércio exterior, importação/exportação', impactScore: 9 },
-        { id: 'procurement', label: 'Compras', value: 'procurement', description: 'Aquisições, fornecedores, negociação', impactScore: 6 },
-        { id: 'finance', label: 'Financeiro', value: 'finance', description: 'Controladoria, custos, fluxo de caixa', impactScore: 7 },
-        { id: 'operations', label: 'Operações', value: 'operations', description: 'Produção, manufatura, processos', impactScore: 6 },
-        { id: 'commercial', label: 'Comercial', value: 'commercial', description: 'Vendas, relacionamento com cliente', impactScore: 5 }
+        { id: 'logistics', label: t('dimensions.businessArea.options.logistics', 'Logistics'), value: 'logistics', description: t('dimensions.businessArea.options.logisticsDesc', 'Transportation, distribution, freight'), impactScore: 7 },
+        { id: 'supply_chain', label: t('dimensions.businessArea.options.supplyChain', 'Supply Chain'), value: 'supply_chain', description: t('dimensions.businessArea.options.supplyChainDesc', 'Supply chain, inventory'), impactScore: 8 },
+        { id: 'comex', label: t('dimensions.businessArea.options.comex', 'COMEX'), value: 'comex', description: t('dimensions.businessArea.options.comexDesc', 'Foreign trade, import/export'), impactScore: 9 },
+        { id: 'procurement', label: t('dimensions.businessArea.options.procurement', 'Procurement'), value: 'procurement', description: t('dimensions.businessArea.options.procurementDesc', 'Purchasing, suppliers, negotiation'), impactScore: 6 },
+        { id: 'finance', label: t('dimensions.businessArea.options.finance', 'Finance'), value: 'finance', description: t('dimensions.businessArea.options.financeDesc', 'Controlling, costs, cash flow'), impactScore: 7 },
+        { id: 'operations', label: t('dimensions.businessArea.options.operations', 'Operations'), value: 'operations', description: t('dimensions.businessArea.options.operationsDesc', 'Production, manufacturing, processes'), impactScore: 6 },
+        { id: 'commercial', label: t('dimensions.businessArea.options.commercial', 'Commercial'), value: 'commercial', description: t('dimensions.businessArea.options.commercialDesc', 'Sales, customer relationships'), impactScore: 5 }
       ],
       required: true,
       multiSelect: true
     },
     {
       id: 'urgency',
-      name: 'Urgência',
-      description: 'Qual a urgência para resolver esse problema?',
+      name: t('dimensions.urgency.name', 'Urgency'),
+      description: t('dimensions.urgency.description', 'How urgent is solving this problem?'),
       icon: Clock,
       options: [
-        { id: 'immediate', label: 'Imediata', value: 'immediate', description: 'Precisa ser resolvido imediatamente, está causando prejuízo agora', impactScore: 9 },
-        { id: 'high', label: 'Alta', value: 'high', description: 'Precisa ser resolvido nas próximas semanas', impactScore: 7 },
-        { id: 'medium', label: 'Média', value: 'medium', description: 'Importante resolver nos próximos meses', impactScore: 5 },
-        { id: 'low', label: 'Baixa', value: 'low', description: 'Pode ser planejado para longo prazo', impactScore: 3 },
-        { id: 'strategic', label: 'Estratégica', value: 'strategic', description: 'Melhoria estratégica, sem urgência operacional', impactScore: 4 }
+        { id: 'immediate', label: t('dimensions.urgency.options.immediate', 'Immediate'), value: 'immediate', description: t('dimensions.urgency.options.immediateDesc', 'Must be solved immediately, causing damage now'), impactScore: 9 },
+        { id: 'high', label: t('dimensions.urgency.options.high', 'High'), value: 'high', description: t('dimensions.urgency.options.highDesc', 'Must be solved in the next few weeks'), impactScore: 7 },
+        { id: 'medium', label: t('dimensions.urgency.options.medium', 'Medium'), value: 'medium', description: t('dimensions.urgency.options.mediumDesc', 'Important to solve in the next few months'), impactScore: 5 },
+        { id: 'low', label: t('dimensions.urgency.options.low', 'Low'), value: 'low', description: t('dimensions.urgency.options.lowDesc', 'Can be planned for long term'), impactScore: 3 },
+        { id: 'strategic', label: t('dimensions.urgency.options.strategic', 'Strategic'), value: 'strategic', description: t('dimensions.urgency.options.strategicDesc', 'Strategic improvement, no operational urgency'), impactScore: 4 }
       ],
       required: true,
       multiSelect: false
     },
     {
       id: 'affected_resources',
-      name: 'Recursos Afetados',
-      description: 'Quais recursos são mais impactados?',
+      name: t('dimensions.resources.name', 'Affected Resources'),
+      description: t('dimensions.resources.description', 'Which resources are most impacted?'),
       icon: Users,
       options: [
-        { id: 'time', label: 'Tempo da equipe', value: 'time', description: 'Muito tempo manual sendo gasto', impactScore: 7 },
-        { id: 'money', label: 'Dinheiro/Custos', value: 'money', description: 'Custos financeiros diretos', impactScore: 8 },
-        { id: 'quality', label: 'Qualidade', value: 'quality', description: 'Impacta qualidade do produto/serviço', impactScore: 6 },
-        { id: 'customer', label: 'Satisfação do cliente', value: 'customer', description: 'Impacta experiência do cliente', impactScore: 9 },
-        { id: 'compliance', label: 'Conformidade', value: 'compliance', description: 'Risco regulatório ou de conformidade', impactScore: 10 },
-        { id: 'scalability', label: 'Escalabilidade', value: 'scalability', description: 'Impede crescimento ou expansão', impactScore: 7 }
+        { id: 'time', label: t('dimensions.resources.options.time', 'Team time'), value: 'time', description: t('dimensions.resources.options.timeDesc', 'Lots of manual time being spent'), impactScore: 7 },
+        { id: 'money', label: t('dimensions.resources.options.money', 'Money/Costs'), value: 'money', description: t('dimensions.resources.options.moneyDesc', 'Direct financial costs'), impactScore: 8 },
+        { id: 'quality', label: t('dimensions.resources.options.quality', 'Quality'), value: 'quality', description: t('dimensions.resources.options.qualityDesc', 'Impacts product/service quality'), impactScore: 6 },
+        { id: 'customer', label: t('dimensions.resources.options.customer', 'Customer satisfaction'), value: 'customer', description: t('dimensions.resources.options.customerDesc', 'Impacts customer experience'), impactScore: 9 },
+        { id: 'compliance', label: t('dimensions.resources.options.compliance', 'Compliance'), value: 'compliance', description: t('dimensions.resources.options.complianceDesc', 'Regulatory or compliance risk'), impactScore: 10 },
+        { id: 'scalability', label: t('dimensions.resources.options.scalability', 'Scalability'), value: 'scalability', description: t('dimensions.resources.options.scalabilityDesc', 'Prevents growth or expansion'), impactScore: 7 }
       ],
       required: true,
       multiSelect: true
@@ -140,13 +142,11 @@ const Phase2: React.FC<Phase2Props> = ({
   const handleOptionSelect = (dimensionId: string, optionId: string, isMulti: boolean) => {
     setSelections(prev => {
       const current = prev[dimensionId] || [];
-      
+
       if (!isMulti) {
-        // Single select - replace
         return { ...prev, [dimensionId]: [optionId] };
       }
-      
-      // Multi select - toggle
+
       if (current.includes(optionId)) {
         return { ...prev, [dimensionId]: current.filter(id => id !== optionId) };
       } else {
@@ -158,29 +158,48 @@ const Phase2: React.FC<Phase2Props> = ({
   const calculateRefinedIntentScore = (): number => {
     let totalImpact = 0;
     let count = 0;
-    
-    // Explicitly casting ids to string[] to satisfy TypeScript strict checks
+    let criticalFactors = 0;
+
     Object.entries(selections).forEach(([dimensionId, ids]) => {
       const optionIds = ids as string[];
       const dimension = dimensions.find(d => d.id === dimensionId);
       if (!dimension) return;
-      
+
       optionIds.forEach(optionId => {
         const option = dimension.options.find(o => o.id === optionId);
         if (option) {
           totalImpact += option.impactScore;
           count++;
+
+          // Track critical factors that push complexity up
+          if (option.impactScore >= 9) criticalFactors++;
+          if (dimensionId === 'impact' && option.id === 'critical') criticalFactors += 2;
+          if (dimensionId === 'urgency' && option.id === 'immediate') criticalFactors++;
+          if (dimensionId === 'affected_resources' && option.id === 'compliance') criticalFactors++;
         }
       });
     });
-    
-    const avgImpact = count > 0 ? totalImpact / count : 0;
-    
-    // Combinar score inicial com impacto das dimensões
-    // Fórmula: 70% do score inicial + 30% do impacto normalizado
-    const normalizedImpact = (avgImpact / 10) * 100; // Converter para 0-100
-    const safeInitialScore = initialIntentScore || 50;
-    return Math.min(100, Math.round(safeInitialScore * 0.7 + normalizedImpact * 0.3));
+
+    // Calculate average impact (0-10 scale)
+    const avgImpact = count > 0 ? totalImpact / count : 5;
+
+    // Convert to 0-100 scale with proper distribution
+    // Low (0-39): avgImpact < 5
+    // Medium (40-69): avgImpact 5-7
+    // High (70-100): avgImpact > 7
+    let baseScore = Math.round((avgImpact / 10) * 100);
+
+    // Boost for critical factors (each adds 5 points, max 20)
+    const criticalBoost = Math.min(criticalFactors * 5, 20);
+
+    // Multi-selection penalty/boost: more selections = more complex
+    const selectionCount = Object.values(selections).flat().length;
+    const selectionBoost = selectionCount > 5 ? Math.min((selectionCount - 5) * 2, 10) : 0;
+
+    // Final score calculation
+    const finalScore = Math.min(100, Math.max(0, baseScore + criticalBoost + selectionBoost));
+
+    return finalScore;
   };
 
   const handleNext = async () => {
@@ -188,17 +207,15 @@ const Phase2: React.FC<Phase2Props> = ({
       setCurrentDimension(prev => prev + 1);
     } else {
       setIsSubmitting(true);
-      
-      // Preparar dados para envio
-      // Explicitly casting ids to string[] to satisfy TypeScript strict checks
+
       const dimensionSelections: DimensionSelection[] = Object.entries(selections).map(([dimensionId, ids]) => {
         const optionIds = ids as string[];
         const dimension = dimensions.find(d => d.id === dimensionId)!;
         const selectedOptions = dimension.options.filter(o => optionIds.includes(o.id));
-        const avgImpact = selectedOptions.length > 0 
+        const avgImpact = selectedOptions.length > 0
           ? selectedOptions.reduce((sum, o) => sum + o.impactScore, 0) / selectedOptions.length
           : 0;
-        
+
         return {
           dimensionId,
           selectedOptionIds: optionIds,
@@ -206,14 +223,12 @@ const Phase2: React.FC<Phase2Props> = ({
           timestamp: new Date()
         };
       });
-      
+
       const refinedScore = calculateRefinedIntentScore();
-      
-      // Salvar no Supabase
+
       try {
         await saveDimensionsToSupabase(problemId, dimensionSelections, refinedScore);
-        
-        // Track analytics
+
         analytics.trackEvent('dimensions_completed', {
           problem_id: problemId,
           dimension_count: dimensionSelections.length,
@@ -223,12 +238,12 @@ const Phase2: React.FC<Phase2Props> = ({
             selections: ds.selectedOptionIds.length
           })))
         });
-        
+
         onComplete(dimensionSelections, refinedScore);
-        toast.success('Estruturação concluída!');
+        toast.success(t('messages.success', 'Structure completed!'));
       } catch (error) {
         console.error('[Phase2] Error saving dimensions:', error);
-        toast.error('Erro ao salvar. Tente novamente.');
+        toast.error(t('messages.error', 'Error saving. Please try again.'));
       } finally {
         setIsSubmitting(false);
       }
@@ -245,17 +260,19 @@ const Phase2: React.FC<Phase2Props> = ({
   const currentSelections = selections[currentDim.id] || [];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in">
+    <div className="max-w-4xl mx-auto px-4 py-8 pt-24 animate-fade-in">
       {/* Progress Bar */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-2">
-          <h2 className="text-2xl font-bold font-display text-white">Estruturar seu problema</h2>
+          <h2 className="text-2xl font-bold font-display text-white">
+            {t('title', 'Structure your problem')}
+          </h2>
           <span className="text-ds-text-tertiary font-mono">
             {currentDimension + 1} / {dimensions.length}
           </span>
         </div>
         <div className="h-2 bg-ds-surface rounded-full overflow-hidden border border-ds-border/30">
-          <div 
+          <div
             className="h-full bg-ds-gradient-primary transition-all duration-500 ease-out shadow-[0_0_10px_rgba(41,160,177,0.5)]"
             style={{ width: `${((currentDimension + 1) / dimensions.length) * 100}%` }}
           />
@@ -270,11 +287,13 @@ const Phase2: React.FC<Phase2Props> = ({
         >
           <div className="flex items-center gap-3">
             <FileText className="w-5 h-5 text-ds-primary-400" />
-            <span className="font-medium text-ds-text-primary">Revisar descrição do problema</span>
+            <span className="font-medium text-ds-text-primary">
+              {t('reviewProblem', 'Review problem description')}
+            </span>
           </div>
           <ChevronDown className={`w-5 h-5 text-ds-text-tertiary transition-transform ${showSummary ? 'rotate-180' : ''}`} />
         </button>
-        
+
         {showSummary && (
           <div className="mt-2 p-4 bg-ds-surface/50 rounded-lg border border-ds-border/50 animate-slide-down">
             <p className="text-ds-text-secondary whitespace-pre-line leading-relaxed">{problemText}</p>
@@ -294,39 +313,45 @@ const Phase2: React.FC<Phase2Props> = ({
             {currentDim.multiSelect && (
               <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 bg-ds-primary-500/10 rounded-full border border-ds-primary-500/20">
                 <Check className="w-3 h-3 text-ds-primary-400" />
-                <span className="text-xs font-medium text-ds-primary-300">Seleção múltipla permitida</span>
+                <span className="text-xs font-medium text-ds-primary-300">
+                  {t('multiSelectAllowed', 'Multiple selection allowed')}
+                </span>
               </div>
             )}
           </div>
         </div>
 
-        {/* Options Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {/* Options - Responsive flex layout */}
+        <div className="flex flex-wrap gap-3">
           {currentDim.options.map((option) => {
             const isSelected = currentSelections.includes(option.id);
-            
+
             return (
               <button
                 key={option.id}
                 onClick={() => handleOptionSelect(currentDim.id, option.id, currentDim.multiSelect)}
-                className={`p-4 rounded-xl text-left transition-all duration-200 relative group ${
+                className={`px-4 py-3 rounded-xl text-left transition-all duration-200 relative group flex-grow sm:flex-grow-0 min-w-[140px] max-w-full sm:max-w-[48%] ${
                   isSelected
                     ? 'bg-ds-primary-500/20 border-2 border-ds-primary-500 shadow-lg shadow-ds-primary-500/10'
                     : 'bg-ds-surface hover:bg-ds-card border border-ds-border hover:border-ds-primary-500/30'
                 }`}
               >
                 <div className="flex items-start justify-between mb-2">
-                  <span className={`font-medium ${isSelected ? 'text-white' : 'text-ds-text-primary'}`}>{option.label}</span>
+                  <span className={`font-medium whitespace-nowrap ${isSelected ? 'text-white' : 'text-ds-text-primary'}`}>
+                    {option.label}
+                  </span>
                   {isSelected && (
-                    <div className="p-1 bg-ds-primary-500 rounded-full animate-fade-in">
+                    <div className="p-1 bg-ds-primary-500 rounded-full animate-fade-in ml-2 flex-shrink-0">
                       <Check className="w-3 h-3 text-white" />
                     </div>
                   )}
                 </div>
-                <p className="text-sm text-ds-text-tertiary group-hover:text-ds-text-secondary transition-colors">{option.description}</p>
-                
+                <p className="text-sm text-ds-text-tertiary group-hover:text-ds-text-secondary transition-colors">
+                  {option.description}
+                </p>
+
                 {/* Impact Indicator */}
-                <div className="mt-4 flex items-center justify-between opacity-80">
+                <div className="mt-3 flex items-center justify-between opacity-80">
                   <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, i) => (
                       <div
@@ -340,7 +365,7 @@ const Phase2: React.FC<Phase2Props> = ({
                     ))}
                   </div>
                   <span className="text-[10px] uppercase tracking-wider text-ds-text-tertiary">
-                    Impacto {option.impactScore}/10
+                    {t('impact', 'Impact')} {option.impactScore}/10
                   </span>
                 </div>
               </button>
@@ -354,7 +379,7 @@ const Phase2: React.FC<Phase2Props> = ({
             <CheckCircle className="w-5 h-5 text-ds-success" />
             <div>
               <p className="font-medium text-ds-text-primary">
-                {currentSelections.length} opção{currentSelections.length !== 1 ? 'es' : ''} selecionada{currentSelections.length !== 1 ? 's' : ''}
+                {currentSelections.length} {t('optionsSelected', 'option(s) selected')}
               </p>
               {!currentDim.multiSelect && currentSelections[0] && (
                 <p className="text-sm text-ds-text-secondary">
@@ -375,9 +400,9 @@ const Phase2: React.FC<Phase2Props> = ({
           className={currentDimension === 0 ? 'opacity-0 pointer-events-none' : ''}
           icon={<ChevronLeft className="w-5 h-5" />}
         >
-          Voltar
+          {t('buttons.back', 'Back')}
         </Button>
-        
+
         <Button
           variant="primary"
           onClick={handleNext}
@@ -386,41 +411,46 @@ const Phase2: React.FC<Phase2Props> = ({
             isSubmitting
           }
           isLoading={isSubmitting}
-          className="px-8"
+          className="px-6"
         >
           {isSubmitting ? (
-            'Processando...'
+            t('buttons.processing', 'Processing...')
           ) : currentDimension === dimensions.length - 1 ? (
             <>
-              CONCLUIR ESTRUTURAÇÃO
+              {t('buttons.complete', 'COMPLETE')}
               <ChevronRight className="w-5 h-5 ml-2" />
             </>
           ) : (
             <>
-              PRÓXIMA DIMENSÃO
+              {t('buttons.next', 'NEXT')}
               <ChevronRight className="w-5 h-5 ml-2" />
             </>
           )}
         </Button>
       </div>
 
-      {/* Intent Score Preview */}
-      <div className="mt-8 p-4 bg-ds-card border border-ds-border rounded-xl">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-ds-text-secondary font-medium">Score de Intenção Refinado:</span>
-          <span className="text-xl font-bold text-ds-primary-400 font-mono">
-            {calculateRefinedIntentScore()}/100
-          </span>
+      {/* Fixed Intent Score Preview - Bottom Right Corner */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <div className="p-4 bg-ds-card/95 backdrop-blur-md border border-ds-border rounded-xl shadow-2xl shadow-black/20 min-w-[200px]">
+          <div className="flex items-center gap-2 mb-2">
+            <Brain className="w-4 h-4 text-ds-primary-400 animate-pulse" />
+            <span className="text-xs font-medium text-ds-text-secondary">
+              {t('intentScore.label', 'AI Refining')}
+            </span>
+          </div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-2xl font-bold text-ds-primary-400 font-mono">
+              {calculateRefinedIntentScore()}
+            </span>
+            <span className="text-ds-text-tertiary text-sm">/100</span>
+          </div>
+          <div className="h-1.5 bg-ds-surface rounded-full overflow-hidden">
+            <div
+              className="h-full bg-ds-gradient-primary transition-all duration-1000 ease-out"
+              style={{ width: `${calculateRefinedIntentScore()}%` }}
+            />
+          </div>
         </div>
-        <div className="h-2 bg-ds-surface rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-ds-gradient-primary transition-all duration-1000 ease-out"
-            style={{ width: `${calculateRefinedIntentScore()}%` }}
-          />
-        </div>
-        <p className="text-xs text-ds-text-tertiary mt-2 text-center">
-          Quanto maior o score, mais personalizada será a próxima fase.
-        </p>
       </div>
     </div>
   );

@@ -39,6 +39,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS email_jobs_updated_at_trigger ON email_jobs;
 CREATE TRIGGER email_jobs_updated_at_trigger
 BEFORE UPDATE ON email_jobs
 FOR EACH ROW
@@ -48,13 +49,13 @@ EXECUTE FUNCTION update_email_jobs_updated_at();
 ALTER TABLE email_jobs ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policy: Users can view their own email job history
+DROP POLICY IF EXISTS user_view_own_email_jobs ON email_jobs;
 CREATE POLICY user_view_own_email_jobs ON email_jobs
   FOR SELECT
   USING (
     blueprint_id IN (
       SELECT id FROM blueprints WHERE user_id = auth.uid()
-    ) OR
-    (SELECT role FROM user_profiles WHERE id = auth.uid()) IN ('admin', 'super_admin')
+    )
   );
 
 -- RLS Policy: Service role (edge functions) can manage email_jobs
@@ -79,14 +80,14 @@ CREATE INDEX IF NOT EXISTS idx_email_delivery_logs_created_at ON email_delivery_
 -- Enable RLS on email_delivery_logs
 ALTER TABLE email_delivery_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS email_delivery_view ON email_delivery_logs;
 CREATE POLICY email_delivery_view ON email_delivery_logs
   FOR SELECT
   USING (
     email_job_id IN (
       SELECT id FROM email_jobs
       WHERE blueprint_id IN (SELECT id FROM blueprints WHERE user_id = auth.uid())
-    ) OR
-    (SELECT role FROM user_profiles WHERE id = auth.uid()) IN ('admin', 'super_admin')
+    )
   );
 
 -- Grant permissions

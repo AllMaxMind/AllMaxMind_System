@@ -93,12 +93,31 @@ const Phase3: React.FC<Phase3Props> = ({
   }, []);
 
   const calculateFinalComplexity = (answers: QuestionAnswer[], score: number): 'small' | 'medium' | 'large' => {
-     // Basic complexity calculation logic could be expanded
-     // For now, relies on initial intent score + critical flags
      let adjustedScore = score;
+
+     // Analyze answers for complexity indicators
      answers.forEach(a => {
+        // Long detailed answers indicate more complex scenarios
         if (a.isCritical && a.answer.length > 200) adjustedScore += 5;
+        if (a.answer.length > 300) adjustedScore += 3;
+
+        // Keywords that indicate complexity
+        const complexityKeywords = [
+          'integração', 'integration', 'api', 'sistema legado', 'legacy',
+          'múltiplos', 'multiple', 'escalabilidade', 'scalability',
+          'segurança', 'security', 'compliance', 'auditoria', 'audit',
+          'real-time', 'tempo real', 'alta disponibilidade', 'high availability'
+        ];
+
+        const lowerAnswer = a.answer.toLowerCase();
+        complexityKeywords.forEach(keyword => {
+          if (lowerAnswer.includes(keyword)) adjustedScore += 2;
+        });
      });
+
+     // Cap the adjustment
+     adjustedScore = Math.min(100, adjustedScore);
+
      return getComplexityFromIntent(adjustedScore);
   };
 

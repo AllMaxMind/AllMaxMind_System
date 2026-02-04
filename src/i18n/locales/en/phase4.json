@@ -1,17 +1,41 @@
 {
   "title": "Your Blueprint Preview",
   "subtitle": "Get full access by providing your contact info",
+  "header": {
+    "title": "Analysis Complete!",
+    "subtitle": "Our AI processed your data and generated a customized technical blueprint for your solution."
+  },
   "blueprint": {
     "loading": "Generating your customized blueprint...",
+    "loading_message": "Our AI is analyzing your problem and creating a personalized solution. This may take a few seconds.",
     "error": "Failed to generate blueprint. Please try again.",
+    "error_title": "Oops! Something went wrong",
+    "error_config": "System configuration error. Please try again later.",
+    "error_empty": "Could not generate blueprint. Our AI is experiencing high demand. Please try again.",
+    "error_generic": "An error occurred while generating your blueprint. Please try again.",
+    "retry": "Try Again",
+    "retry_count": "Attempt {{current}} of {{max}}. If the problem persists, please contact us.",
     "sections": {
-      "objectives": "Objectives",
-      "architecture": "Architecture",
+      "objectives": "Strategic Objectives",
+      "architecture": "Technical Architecture",
+      "features": "Key Features",
+      "metrics": "Success Metrics",
+      "risks": "Risks and Mitigation",
+      "next_steps": "Next Steps",
       "timeline": "Timeline",
-      "investment": "Investment Estimate"
+      "investment": "Investment Estimate",
+      "problem": "Problem Definition",
+      "summary": "Executive Summary"
     },
     "disclaimer": "This is a preliminary estimate. Final proposal may vary based on detailed analysis.",
-    "offer": "Full blueprint navigable in 7 business days"
+    "offer": "Full blueprint navigable in 7 business days",
+    "locked_title": "Content Locked",
+    "locked_message": "To access the Technical Architecture, Detailed Features and Implementation Plan, unlock free access below.",
+    "unlock_cta": "UNLOCK FULL BLUEPRINT",
+    "download_pdf": "Download Blueprint (PDF)",
+    "downloading_pdf": "Generating PDF...",
+    "pdf_success": "Blueprint downloaded successfully!",
+    "pdf_error": "Error downloading PDF"
   },
   "form": {
     "title": "Get Full Access",
@@ -70,6 +94,54 @@
   "errors": {
     "rate_limit": "Please wait 5 minutes between submissions",
     "validation": "Please fill all required fields",
-    "network": "Network error. Please try again."
+    "network": "Network error. Please try again.",
+    "terms_required": "You must accept the terms and conditions"
+  },
+  "offer": {
+    "title": "Special Offer - Prototype in 7 Days",
+    "subtitle": "Leave your details and our specialists will contact you for:",
+    "items": {
+      "meeting": "Technical alignment meeting (30min)",
+      "proposal": "Detailed proposal with validated scope",
+      "prototype": "Navigable prototype in 7 business days",
+      "implementation": "Implementation with satisfaction guarantee"
+    },
+    "whatsapp_cta": "WHATSAPP NOW",
+    "email_cta": "REQUEST BY EMAIL"
+  },
+  "trust": {
+    "title": "Security and Guarantee",
+    "items": {
+      "encrypted": "100% encrypted data",
+      "fast": "Fast response",
+      "expert": "Expert Consulting"
+    }
+  },
+  "auth": {
+    "or_login_with": "Or quickly access with",
+    "google": "Google",
+    "magic_link": "Magic Link",
+    "magic_link_sent": "Access link sent! Check your email.",
+    "magic_link_error": "Error sending magic link",
+    "email_required": "Please fill your email first",
+    "login_error": "Login error. Please try again."
+  },
+  "whatsapp": {
+    "message": "Hello! I just requested a blueprint for my {{complexity}} project. My code is: {{problemId}}"
+  },
+  "complexity": {
+    "small": "low",
+    "medium": "medium",
+    "large": "high"
+  },
+  "timeline": {
+    "small": "10-15 days",
+    "medium": "20-30 days",
+    "large": "40-60 days"
+  },
+  "investment": {
+    "small": "$3,000 - $6,000",
+    "medium": "$6,000 - $12,000",
+    "large": "$12,000 - $24,000+"
   }
 }

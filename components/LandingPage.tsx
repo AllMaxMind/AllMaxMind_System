@@ -299,18 +299,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAnalyze }) => {
               {/* Content Area */}
               <div className="relative flex-grow overflow-hidden flex flex-col">
 
-                {/* IA Refinando Badge */}
-                {(isTyping || isImproving) && (
+                {/* IA Aprimorando Badge - só aparece quando usuário clica em "Melhorar com IA" */}
+                {isImproving && (
                   <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2 bg-teal-900/40 border border-teal-500/30 px-3 py-1.5 rounded-full backdrop-blur-sm badge-pulse shadow-[0_0_10px_rgba(20,184,166,0.2)]">
                     <span className="relative flex h-2.5 w-2.5">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />
                       <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-500" />
                     </span>
                     <span className="text-xs font-semibold text-teal-300 uppercase tracking-wide">
-                      {isImproving
-                        ? t('aiImprove.processing', 'IA Aprimorando...')
-                        : t('aiRefining', 'IA Refinando...')
-                      }
+                      {t('aiImprove.processing', 'IA Aprimorando...')}
                     </span>
                   </div>
                 )}

@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { GoogleGenerativeAI } from "npm:@google/generative-ai@^0.7.0"
+import { GoogleGenerativeAI } from "npm:@google/generative-ai@^0.21.0"
 
 // Declare Deno to avoid type errors
 declare const Deno: any;
@@ -45,8 +45,8 @@ serve(async (req) => {
 
     const client = new GoogleGenerativeAI(apiKey)
 
-    // Use Gemini 1.5 Flash which supports audio input
-    const model = client.getGenerativeModel({ model: "gemini-1.5-flash" })
+    // Use Gemini 2.0 Flash which supports audio input
+    const model = client.getGenerativeModel({ model: "gemini-2.0-flash" })
 
     const isPortuguese = language && language.startsWith('pt')
 

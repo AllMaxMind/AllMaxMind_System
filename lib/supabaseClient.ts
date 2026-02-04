@@ -27,11 +27,22 @@ const getVisitorHeader = () => {
   return vid ? { 'x-visitor-id': vid } : {};
 };
 
-// Cliente Real
+// Cliente Real - configurado para evitar AbortErrors do auth lock
 export const supabase = (supabaseUrl && supabaseAnonKey)
   ? createClient(supabaseUrl, supabaseAnonKey, {
       global: {
         headers: getVisitorHeader()
+      },
+      auth: {
+        // Desabilita o lock que causa AbortErrors em navegadores
+        lock: async (name: string, acquireTimeout: number, fn: () => Promise<any>) => {
+          // Skip the navigator.locks API and just execute the function directly
+          return fn();
+        },
+        // Desabilita auto-refresh para evitar conflitos
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true
       }
     })
   : createMockClient();

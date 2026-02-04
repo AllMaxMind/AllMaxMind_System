@@ -26,11 +26,24 @@ export class VisitorTracker {
   private visitorId: string;
   private sessionId: string;
   private hasPersistedVisitor = false;
+  private abortController: AbortController | null = null;
 
   constructor() {
     this.visitorId = this.getOrCreateVisitorId();
     this.sessionId = this.getOrCreateSessionId();
+    this.abortController = new AbortController();
     this.persistVisitorToSupabase();
+  }
+
+  /**
+   * Cleanup method to abort any pending operations
+   * Call this when the tracker is no longer needed (e.g., component unmount)
+   */
+  public destroy(): void {
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
+    }
   }
 
   public getVisitorId(): string {
@@ -122,6 +135,11 @@ export class VisitorTracker {
     if (this.hasPersistedVisitor) return;
 
     try {
+      // Check if already aborted before starting
+      if (this.abortController?.signal.aborted) {
+        return;
+      }
+
       const { device, os, browser, browserVersion } = this.parseUserAgent();
       const utmParams = this.getUTMParams();
       const now = new Date().toISOString();
@@ -151,7 +169,16 @@ export class VisitorTracker {
         .from('visitors')
         .upsert(visitorRecord, { onConflict: 'anonymous_id' });
 
+      // Check if aborted during the async operation
+      if (this.abortController?.signal.aborted) {
+        return;
+      }
+
       if (error) {
+        // Silently ignore AbortError - expected when component unmounts or page transitions
+        if (error.message?.includes('AbortError') || error.message?.includes('aborted')) {
+          return;
+        }
         console.warn('[Analytics] Could not persist visitor:', error.message);
         // Don't throw - non-critical for UX
       } else {
@@ -159,6 +186,10 @@ export class VisitorTracker {
         this.hasPersistedVisitor = true;
       }
     } catch (error) {
+      // Silently ignore AbortError - this is expected when component unmounts
+      if (error instanceof Error && (error.name === 'AbortError' || error.message?.includes('aborted'))) {
+        return;
+      }
       console.error('[Analytics] Error persisting visitor:', error);
       // Non-critical - continue anyway
     }

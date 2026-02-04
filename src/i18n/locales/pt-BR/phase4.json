@@ -1,17 +1,41 @@
 {
   "title": "Preview do Seu Blueprint",
   "subtitle": "Obtenha acesso completo fornecendo suas informações de contato",
+  "header": {
+    "title": "Analise Concluida!",
+    "subtitle": "Nossa IA processou seus dados e gerou um blueprint tecnico personalizado para sua solucao."
+  },
   "blueprint": {
     "loading": "Gerando seu blueprint personalizado...",
+    "loading_message": "Nossa IA esta analisando seu problema e criando uma solucao personalizada. Isso pode levar alguns segundos.",
     "error": "Falha ao gerar blueprint. Tente novamente.",
+    "error_title": "Ops! Algo deu errado",
+    "error_config": "Erro de configuracao do sistema. Por favor, tente novamente mais tarde.",
+    "error_empty": "Nao foi possivel gerar o blueprint. Nossa IA esta com alta demanda. Tente novamente.",
+    "error_generic": "Ocorreu um erro ao gerar seu blueprint. Por favor, tente novamente.",
+    "retry": "Tentar Novamente",
+    "retry_count": "Tentativa {{current}} de {{max}}. Se o problema persistir, entre em contato conosco.",
     "sections": {
-      "objectives": "Objetivos",
-      "architecture": "Arquitetura",
+      "objectives": "Objetivos Estrategicos",
+      "architecture": "Arquitetura Tecnica",
+      "features": "Funcionalidades Chave",
+      "metrics": "Metricas de Sucesso",
+      "risks": "Riscos e Mitigacao",
+      "next_steps": "Proximos Passos",
       "timeline": "Cronograma",
-      "investment": "Estimativa de Investimento"
+      "investment": "Estimativa de Investimento",
+      "problem": "Definicao do Problema",
+      "summary": "Resumo Executivo"
     },
-    "disclaimer": "Esta é uma estimativa preliminar. A proposta final pode variar baseada em análise detalhada.",
-    "offer": "Blueprint completo navegável em 7 dias úteis"
+    "disclaimer": "Esta e uma estimativa preliminar. A proposta final pode variar baseada em analise detalhada.",
+    "offer": "Blueprint completo navegavel em 7 dias uteis",
+    "locked_title": "Conteudo Bloqueado",
+    "locked_message": "Para acessar a Arquitetura Tecnica, Funcionalidades Detalhadas e Plano de Implementacao, libere o acesso gratuito abaixo.",
+    "unlock_cta": "LIBERAR BLUEPRINT COMPLETO",
+    "download_pdf": "Baixar Blueprint (PDF)",
+    "downloading_pdf": "Gerando PDF...",
+    "pdf_success": "Blueprint baixado com sucesso!",
+    "pdf_error": "Erro ao baixar o PDF"
   },
   "form": {
     "title": "Obter Acesso Completo",
@@ -70,6 +94,54 @@
   "errors": {
     "rate_limit": "Aguarde 5 minutos entre envios",
     "validation": "Por favor preencha todos os campos obrigatórios",
-    "network": "Erro de rede. Tente novamente."
+    "network": "Erro de rede. Tente novamente.",
+    "terms_required": "Voce precisa aceitar os termos e condicoes"
+  },
+  "offer": {
+    "title": "Oferta Especial - Prototipo em 7 Dias",
+    "subtitle": "Deixe seus dados e nossos especialistas entrarao em contato para:",
+    "items": {
+      "meeting": "Reuniao de alinhamento tecnico (30min)",
+      "proposal": "Proposta detalhada com escopo validado",
+      "prototype": "Prototipo navegavel em 7 dias uteis",
+      "implementation": "Implementacao com garantia de satisfacao"
+    },
+    "whatsapp_cta": "WHATSAPP AGORA",
+    "email_cta": "SOLICITAR POR EMAIL"
+  },
+  "trust": {
+    "title": "Seguranca e Garantia",
+    "items": {
+      "encrypted": "Dados 100% criptografados",
+      "fast": "Atendimento rapido",
+      "expert": "Consultoria Especializada"
+    }
+  },
+  "auth": {
+    "or_login_with": "Ou acesse rapidamente com",
+    "google": "Google",
+    "magic_link": "Magic Link",
+    "magic_link_sent": "Link de acesso enviado! Verifique seu email.",
+    "magic_link_error": "Erro ao enviar magic link",
+    "email_required": "Preencha seu email primeiro",
+    "login_error": "Erro no login. Tente novamente."
+  },
+  "whatsapp": {
+    "message": "Ola! Acabei de solicitar o blueprint para meu projeto de {{complexity}}. Meu codigo e: {{problemId}}"
+  },
+  "complexity": {
+    "small": "baixa",
+    "medium": "media",
+    "large": "alta"
+  },
+  "timeline": {
+    "small": "10-15 dias",
+    "medium": "20-30 dias",
+    "large": "40-60 dias"
+  },
+  "investment": {
+    "small": "R$ 15.000 - R$ 30.000",
+    "medium": "R$ 30.000 - R$ 60.000",
+    "large": "R$ 60.000 - R$ 120.000+"
   }
 }

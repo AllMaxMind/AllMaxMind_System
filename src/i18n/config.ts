@@ -4,16 +4,32 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 // Import translations
 import enCommon from './locales/en/common.json';
+import enLanding from './locales/en/landing.json';
 import enPhase2 from './locales/en/phase2.json';
 import enPhase3 from './locales/en/phase3.json';
 import enPhase4 from './locales/en/phase4.json';
 import enEmail from './locales/en/email.json';
 
 import ptBRCommon from './locales/pt-BR/common.json';
+import ptBRLanding from './locales/pt-BR/landing.json';
 import ptBRPhase2 from './locales/pt-BR/phase2.json';
 import ptBRPhase3 from './locales/pt-BR/phase3.json';
 import ptBRPhase4 from './locales/pt-BR/phase4.json';
 import ptBREmail from './locales/pt-BR/email.json';
+
+// Get saved language or detect from browser
+const getSavedLanguage = (): string => {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('language');
+    if (saved && ['en-US', 'pt-BR'].includes(saved)) {
+      return saved;
+    }
+  }
+  if (typeof navigator !== 'undefined' && navigator.language.startsWith('pt')) {
+    return 'pt-BR';
+  }
+  return 'en-US';
+};
 
 i18next
   .use(LanguageDetector)
@@ -22,6 +38,7 @@ i18next
     resources: {
       'en-US': {
         common: enCommon,
+        landing: enLanding,
         phase2: enPhase2,
         phase3: enPhase3,
         phase4: enPhase4,
@@ -29,6 +46,7 @@ i18next
       },
       'pt-BR': {
         common: ptBRCommon,
+        landing: ptBRLanding,
         phase2: ptBRPhase2,
         phase3: ptBRPhase3,
         phase4: ptBRPhase4,
@@ -37,13 +55,20 @@ i18next
     },
     detection: {
       order: ['localStorage', 'navigator'],
+      lookupLocalStorage: 'language',
       caches: ['localStorage'],
     },
-    lng: typeof navigator !== 'undefined' && navigator.language.startsWith('pt') ? 'pt-BR' : 'en-US',
+    lng: getSavedLanguage(),
     fallbackLng: 'en-US',
+    supportedLngs: ['en-US', 'pt-BR'],
     debug: false,
     interpolation: {
-      escapeValue: false, // React já faz escape
+      escapeValue: false, // React already escapes
+    },
+    react: {
+      useSuspense: false, // Prevent loading flicker
+      bindI18n: 'languageChanged loaded', // Listen to language changes
+      bindI18nStore: 'added removed', // Listen to store changes
     },
   });
 

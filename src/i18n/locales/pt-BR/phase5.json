@@ -1,0 +1,81 @@
+{
+  "title": "Vamos Finalizar!",
+  "subtitle": "Responda algumas perguntas rapidas para personalizar sua experiencia.",
+  "progress": "Etapa {{current}} de {{total}}",
+  "points": "pontos",
+  "skip": "Pular esta etapa",
+  "score": {
+    "label": "Seu Score"
+  },
+  "status": {
+    "morno": "Morno",
+    "acompanhando": "Acompanhando",
+    "quente": "Quente"
+  },
+  "buttons": {
+    "back": "Voltar",
+    "continue": "Continuar",
+    "finish": "Finalizar"
+  },
+  "errors": {
+    "generic": "Ocorreu um erro. Tente novamente.",
+    "dismiss": "Fechar"
+  },
+  "step1": {
+    "title": "O que achou do blueprint?",
+    "description": "Sua opiniao nos ajuda a personalizar o atendimento.",
+    "options": {
+      "veryInterested": "Muito interessado",
+      "interested": "Interessado",
+      "maybe": "Talvez depois",
+      "notNow": "Nao e agora"
+    }
+  },
+  "step2": {
+    "title": "Qual seu orcamento?",
+    "description": "Isso nos ajuda a preparar uma proposta adequada.",
+    "options": {
+      "under30k": "Ate R$ 30.000",
+      "30to60k": "R$ 30.000 - R$ 60.000",
+      "60to120k": "R$ 60.000 - R$ 120.000",
+      "over120k": "Acima de R$ 120.000"
+    }
+  },
+  "step3": {
+    "title": "Qual seu prazo?",
+    "description": "Quando voce gostaria de comecar o projeto?",
+    "options": {
+      "urgent": "Urgente (< 2 semanas)",
+      "nextMonth": "Proximo mes",
+      "threeMonths": "Proximos 3 meses",
+      "future": "Futuro (+ 6 meses)"
+    }
+  },
+  "step4": {
+    "title": "Vamos conversar?",
+    "description": "Agende uma discussao com nossos especialistas.",
+    "selectDate": "Selecione um dia",
+    "selectTime": "Selecione um horario",
+    "scheduled": "Agendado para",
+    "at": "as",
+    "skipSchedule": "Pular Agendamento"
+  },
+  "step5": {
+    "title": "Conecte pelo WhatsApp",
+    "description": "Receba atualizacoes e fale diretamente conosco.",
+    "phoneLabel": "Seu WhatsApp",
+    "invalidPhone": "Por favor, insira um telefone valido.",
+    "phoneValid": "Telefone valido!",
+    "addToGroup": "Adicionar ao grupo do projeto",
+    "addToGroupDesc": "Receba updates exclusivos e tire duvidas em tempo real.",
+    "receiveUpdates": "Receber atualizacoes por WhatsApp",
+    "receiveUpdatesDesc": "Comunicacoes importantes sobre seu projeto.",
+    "connect": "Conectar WhatsApp",
+    "skip": "Continuar sem WhatsApp"
+  },
+  "complete": {
+    "success": "Perfeito! Suas informacoes foram salvas. Entraremos em contato em breve.",
+    "title": "Tudo pronto!",
+    "message": "Suas preferencias foram salvas com sucesso."
+  }
+}

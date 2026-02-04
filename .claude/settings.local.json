@@ -23,7 +23,22 @@
       "Bash(npx supabase secrets set:*)",
       "Bash(node:*)",
       "WebSearch",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(dir:*)",
+      "Bash(npx supabase db push)",
+      "Bash(npx supabase db push:*)",
+      "Bash(npx supabase:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(npm install:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(findstr:*)",
+      "Bash(timeout:*)",
+      "Bash(netstat:*)",
+      "Bash(npm test:*)",
+      "Bash(xargs:*)",
+      "Bash(curl:*)"
     ]
   }
 }

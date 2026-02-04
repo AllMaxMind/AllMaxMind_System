@@ -151,18 +151,35 @@ export const transcribeAudioWithAI = async (
     console.log('[Landing] Language:', language);
     console.log('[Landing] Audio data length:', audioData.length);
 
-    const { data, error } = await supabase.functions.invoke('transcribe-audio', {
-      body: {
+    // Use direct fetch to avoid Supabase client auth state issues
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase configuration missing');
+    }
+
+    const response = await fetch(`${supabaseUrl}/functions/v1/transcribe-audio`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseAnonKey}`,
+        'apikey': supabaseAnonKey
+      },
+      body: JSON.stringify({
         audioData,
         mimeType,
         language
-      }
+      })
     });
 
-    if (error) {
-      console.error('[Landing] Transcription Edge Function error:', error);
-      throw error;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: response.statusText }));
+      console.error('[Landing] Transcription Edge Function error:', errorData);
+      throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
     }
+
+    const data = await response.json();
 
     if (!data || !data.transcribedText) {
       throw new Error('No transcription returned from Edge Function');

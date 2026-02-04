@@ -1,0 +1,81 @@
+{
+  "title": "Let's Finalize!",
+  "subtitle": "Answer a few quick questions to personalize your experience.",
+  "progress": "Step {{current}} of {{total}}",
+  "points": "points",
+  "skip": "Skip this step",
+  "score": {
+    "label": "Your Score"
+  },
+  "status": {
+    "morno": "Cold",
+    "acompanhando": "Following",
+    "quente": "Hot"
+  },
+  "buttons": {
+    "back": "Back",
+    "continue": "Continue",
+    "finish": "Finish"
+  },
+  "errors": {
+    "generic": "An error occurred. Please try again.",
+    "dismiss": "Dismiss"
+  },
+  "step1": {
+    "title": "What did you think of the blueprint?",
+    "description": "Your feedback helps us personalize your service.",
+    "options": {
+      "veryInterested": "Very interested",
+      "interested": "Interested",
+      "maybe": "Maybe later",
+      "notNow": "Not right now"
+    }
+  },
+  "step2": {
+    "title": "What's your budget?",
+    "description": "This helps us prepare an appropriate proposal.",
+    "options": {
+      "under30k": "Up to $6,000",
+      "30to60k": "$6,000 - $12,000",
+      "60to120k": "$12,000 - $24,000",
+      "over120k": "Over $24,000"
+    }
+  },
+  "step3": {
+    "title": "What's your timeline?",
+    "description": "When would you like to start the project?",
+    "options": {
+      "urgent": "Urgent (< 2 weeks)",
+      "nextMonth": "Next month",
+      "threeMonths": "Next 3 months",
+      "future": "Future (6+ months)"
+    }
+  },
+  "step4": {
+    "title": "Let's talk?",
+    "description": "Schedule a discussion with our specialists.",
+    "selectDate": "Select a day",
+    "selectTime": "Select a time",
+    "scheduled": "Scheduled for",
+    "at": "at",
+    "skipSchedule": "Skip Scheduling"
+  },
+  "step5": {
+    "title": "Connect via WhatsApp",
+    "description": "Receive updates and talk directly with us.",
+    "phoneLabel": "Your WhatsApp",
+    "invalidPhone": "Please enter a valid phone number.",
+    "phoneValid": "Valid phone!",
+    "addToGroup": "Add to project group",
+    "addToGroupDesc": "Receive exclusive updates and ask questions in real-time.",
+    "receiveUpdates": "Receive updates via WhatsApp",
+    "receiveUpdatesDesc": "Important communications about your project.",
+    "connect": "Connect WhatsApp",
+    "skip": "Continue without WhatsApp"
+  },
+  "complete": {
+    "success": "Perfect! Your information has been saved. We'll be in touch soon.",
+    "title": "All done!",
+    "message": "Your preferences have been saved successfully."
+  }
+}

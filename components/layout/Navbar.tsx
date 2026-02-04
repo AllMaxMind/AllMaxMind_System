@@ -62,47 +62,46 @@ const Navbar: React.FC = () => {
         <div className="hidden md:flex items-center gap-4">
           <LanguageSelector />
 
-          {/* User Menu (when authenticated) */}
-          {user && !loading && (
-            <div className="flex items-center gap-3">
-              {isAdmin && (
-                <button
-                  onClick={() => window.location.hash = '/admin'}
-                  className="px-3 py-2 rounded-lg flex items-center gap-2 bg-ds-primary-500/10 border border-ds-primary-500/30 text-ds-primary-400 hover:bg-ds-primary-500/20 transition-colors text-sm font-medium"
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  Admin
-                </button>
+          {/* Admin Button - Only show for admins */}
+          {user && !loading && isAdmin && (
+            <button
+              onClick={() => window.location.hash = '/admin'}
+              className="px-3 py-2 rounded-lg flex items-center gap-2 bg-ds-primary-500/10 border border-ds-primary-500/30 text-ds-primary-400 hover:bg-ds-primary-500/20 transition-colors text-sm font-medium"
+            >
+              <BarChart3 className="w-4 h-4" />
+              Admin
+            </button>
+          )}
+
+          {/* User Menu - Only show for admins or when explicitly needed */}
+          {user && !loading && isAdmin && (
+            <div className="relative">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="px-3 py-2 rounded-lg bg-ds-surface/50 border border-slate-600 text-white hover:border-ds-primary-500 transition-colors text-sm"
+              >
+                {user.email?.split('@')[0]}
+              </button>
+
+              {showUserMenu && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-ds-card border border-ds-border rounded-lg shadow-lg z-50">
+                  <button
+                    onClick={async () => {
+                      await signOut();
+                      setShowUserMenu(false);
+                    }}
+                    className="w-full px-4 py-2 text-left flex items-center gap-2 text-ds-text-secondary hover:text-white hover:bg-ds-surface transition-colors text-sm"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                </div>
               )}
-
-              <div className="relative">
-                <button
-                  onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="px-3 py-2 rounded-lg bg-ds-surface/50 border border-slate-600 text-white hover:border-ds-primary-500 transition-colors text-sm"
-                >
-                  {user.email?.split('@')[0]}
-                </button>
-
-                {showUserMenu && (
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-ds-card border border-ds-border rounded-lg shadow-lg z-50">
-                    <button
-                      onClick={async () => {
-                        await signOut();
-                        setShowUserMenu(false);
-                      }}
-                      className="w-full px-4 py-2 text-left flex items-center gap-2 text-ds-text-secondary hover:text-white hover:bg-ds-surface transition-colors text-sm"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Sign Out
-                    </button>
-                  </div>
-                )}
-              </div>
             </div>
           )}
 
-          {/* Sign Up Button (when not authenticated) */}
-          {!user && !loading && (
+          {/* Sign Up Button - Show for non-admins and non-authenticated users */}
+          {(!user || !isAdmin) && !loading && (
             <button className="px-5 py-2 rounded-full border border-slate-600 text-white hover:border-ds-primary-500 hover:text-ds-accent transition-colors text-sm font-medium bg-ds-surface/50">
               {t('nav.signUp', 'Sign Up')}
             </button>
