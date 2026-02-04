@@ -83,12 +83,12 @@ describe('Email Provider', () => {
   });
 
   it('should handle email with optional PDF URL', () => {
-    const withPdf = {
+    const withPdf: { recipient_email: string; pdf_url?: string } = {
       recipient_email: 'test@example.com',
       pdf_url: 'https://storage.example.com/blueprint.pdf'
     };
 
-    const withoutPdf = {
+    const withoutPdf: { recipient_email: string; pdf_url?: string } = {
       recipient_email: 'test@example.com'
       // pdf_url is optional
     };

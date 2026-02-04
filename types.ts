@@ -1,11 +1,11 @@
 // Enums for Application Stages (Mapping to the Implementation Plan)
 export enum AppStage {
-  LANDING = 'LANDING',           // ETAPA 2: Landing Page WAUUUU
-  PASSIVE_DATA = 'PASSIVE_DATA', // ETAPA 3: Analytics Setup (Background)
-  PROBLEM_INTAKE = 'PROBLEM_INTAKE', // ETAPA 4: Core Input
-  DIMENSION_SELECTION = 'DIMENSION_SELECTION', // ETAPA 5
-  ADAPTIVE_QUESTIONS = 'ADAPTIVE_QUESTIONS', // ETAPA 6
-  BLUEPRINT_PREVIEW = 'BLUEPRINT_PREVIEW', // ETAPA 7
+  LANDING = 'LANDING',           // Landing Page with Problem Intake
+  PASSIVE_DATA = 'PASSIVE_DATA', // Analytics Setup (Background)
+  DIMENSION_SELECTION = 'DIMENSION_SELECTION', // Phase 2: Dimension Selection
+  ADAPTIVE_QUESTIONS = 'ADAPTIVE_QUESTIONS', // Phase 3: Adaptive Questions
+  BLUEPRINT_PREVIEW = 'BLUEPRINT_PREVIEW', // Phase 4: Blueprint Preview
+  ADMIN = 'ADMIN',               // Admin Dashboard (Story P4)
 }
 
 export interface UserSession {

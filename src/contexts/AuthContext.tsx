@@ -6,10 +6,11 @@ import { supabase } from '../lib/supabaseClient';
 import type { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
 
 interface AuthContextType {
-  user: User | null;
+  user: (User & { role?: string }) | null;
   session: Session | null;
   loading: boolean;
   isAuthenticated: boolean;
+  userRole: 'user' | 'admin' | 'super_admin' | null;
   signInWithGoogle: () => Promise<void>;
   signInWithMagicLink: (email: string) => Promise<{ success: boolean; error?: string }>;
   signOut: () => Promise<void>;
@@ -19,9 +20,36 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<(User & { role?: string }) | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState<'user' | 'admin' | 'super_admin' | null>(null);
+
+  // Fetch user role from user_profiles table
+  const fetchUserRole = useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('role')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        // Profile doesn't exist yet - user will be created by trigger
+        console.debug('[Auth] User profile not found, will be created by trigger');
+        setUserRole('user');
+        return 'user';
+      }
+
+      const role = data?.role || 'user';
+      setUserRole(role as 'user' | 'admin' | 'super_admin');
+      return role;
+    } catch (err) {
+      console.error('[Auth] Error fetching user role:', err);
+      setUserRole('user');
+      return 'user';
+    }
+  }, []);
 
   // Link user to existing leads by email
   const linkUserToLeads = useCallback(async () => {
@@ -53,19 +81,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(newSession?.user ?? null);
     setLoading(false);
 
-    // Link user to leads on sign in
+    // Fetch user role and link to leads on sign in
     if (event === 'SIGNED_IN' && newSession?.user) {
+      // Fetch role first
+      const role = await fetchUserRole(newSession.user.id);
+
+      // Then update user object with role
+      setUser(prev => prev ? { ...prev, role } : null);
+
       // Small delay to ensure state is updated
       setTimeout(() => {
         linkUserToLeads();
       }, 100);
     }
 
-    // Clear return URL on sign out
+    // Clear return URL and role on sign out
     if (event === 'SIGNED_OUT') {
       localStorage.removeItem('auth_return_to');
+      setUserRole(null);
     }
-  }, [linkUserToLeads]);
+  }, [fetchUserRole, linkUserToLeads]);
 
   // Initialize auth state
   useEffect(() => {
@@ -80,11 +115,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.error('[Auth] Error getting session:', error);
         }
 
-        if (mounted) {
+        if (mounted && existingSession?.user) {
           setSession(existingSession);
-          setUser(existingSession?.user ?? null);
-          setLoading(false);
+          setUser(existingSession.user);
+
+          // Fetch role for existing session
+          const role = await fetchUserRole(existingSession.user.id);
+          setUser(prev => prev ? { ...prev, role } : null);
+        } else if (mounted) {
+          setSession(null);
+          setUser(null);
         }
+        setLoading(false);
       } catch (err) {
         console.error('[Auth] Error initializing auth:', err);
         if (mounted) {
@@ -102,7 +144,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [handleAuthChange]);
+  }, [handleAuthChange, fetchUserRole]);
 
   // Handle auth callback from URL hash (for OAuth and Magic Link)
   useEffect(() => {
@@ -214,6 +256,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     session,
     loading,
     isAuthenticated: !!user,
+    userRole,
     signInWithGoogle,
     signInWithMagicLink,
     signOut,

@@ -76,13 +76,14 @@ export function validateBlueprint(data: unknown) {
     return { valid: true, data: validated, error: null };
   } catch (error) {
     if (error instanceof z.ZodError) {
+      const zodError = error as z.ZodError<unknown>;
       return {
         valid: false,
         data: null,
-        error: error.errors.map(e => ({
-          field: e.path.join('.'),
+        error: zodError.issues?.map(e => ({
+          field: e.path?.join('.') || 'unknown',
           message: e.message
-        }))
+        })) || [{ field: 'unknown', message: 'Validation error' }]
       };
     }
     return {

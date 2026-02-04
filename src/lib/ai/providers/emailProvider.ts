@@ -4,10 +4,10 @@
  */
 
 import { Resend } from 'resend';
-import type { Language } from '@/types/blueprint';
+import type { Language } from '../../../types/blueprint';
 
-const resendApiKey = import.meta.env.VITE_RESEND_API_KEY;
-const resend = new Resend(resendApiKey);
+const resendApiKey = import.meta.env.VITE_RESEND_API_KEY || '';
+const resend = new Resend(resendApiKey as string);
 
 export interface EmailTemplate {
   name: string;
