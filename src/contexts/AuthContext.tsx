@@ -1,7 +1,7 @@
 // AuthContext - Global authentication state management
 // Provides Google OAuth and Magic Link authentication
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { linkSessionToUser } from '../lib/auth/linkSessionToUser';
 import type { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
@@ -26,42 +26,66 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<'user' | 'admin' | 'super_admin' | null>(null);
 
-  // Fetch user role from user_profiles table
-  const fetchUserRole = useCallback(async (userId: string) => {
+  // Refs to prevent duplicate calls and infinite loops
+  const lastFetchedUserId = useRef<string | null>(null);
+  const isFetchingRole = useRef(false);
+  const lastAuthEvent = useRef<string | null>(null);
+
+  // Fetch user role from user_profiles table (with deduplication)
+  const fetchUserRole = useCallback(async (userId: string): Promise<string> => {
+    // Prevent duplicate fetches for same user
+    if (lastFetchedUserId.current === userId || isFetchingRole.current) {
+      return userRole || 'user';
+    }
+
+    isFetchingRole.current = true;
+
     try {
       const { data, error } = await supabase
         .from('user_profiles')
         .select('role')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
-      if (error) {
-        // Profile doesn't exist yet - user will be created by trigger
-        console.debug('[Auth] User profile not found, will be created by trigger');
+      if (error && error.code !== 'PGRST116') {
+        // Real error (not just "no rows")
+        console.error('[Auth] Error fetching user role:', error.message);
         setUserRole('user');
         return 'user';
       }
 
-      const role = data?.role || 'user';
+      if (!data) {
+        // Profile doesn't exist yet - user will be created by trigger
+        console.debug('[Auth] User profile not found, will be created by trigger');
+        setUserRole('user');
+        lastFetchedUserId.current = userId;
+        return 'user';
+      }
+
+      const role = data.role || 'user';
       setUserRole(role as 'user' | 'admin' | 'super_admin');
+      lastFetchedUserId.current = userId;
       return role;
     } catch (err) {
       console.error('[Auth] Error fetching user role:', err);
       setUserRole('user');
       return 'user';
+    } finally {
+      isFetchingRole.current = false;
     }
-  }, []);
+  }, [userRole]);
 
   // Link user to existing leads by email
   const linkUserToLeads = useCallback(async () => {
-    if (!user?.id || !user?.email) return;
+    const currentUser = user;
+    if (!currentUser?.id || !currentUser?.email) return;
 
     try {
       // Update leads that match user email and have no user_id
       const { error } = await supabase
         .from('leads')
-        .update({ user_id: user.id })
-        .eq('user_email', user.email)
+        .update({ user_id: currentUser.id })
+        .eq('user_email', currentUser.email)
         .is('user_id', null);
 
       if (error) {
@@ -72,19 +96,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (err) {
       console.error('[Auth] Error linking user to leads:', err);
     }
-  }, [user]);
+  }, [user?.id, user?.email]);
 
-  // Handle auth state changes
+  // Handle auth state changes (with deduplication to prevent loops)
   const handleAuthChange = useCallback(async (event: AuthChangeEvent, newSession: Session | null) => {
+    // Skip duplicate events for same user
+    const eventKey = `${event}-${newSession?.user?.id || 'none'}`;
+    if (lastAuthEvent.current === eventKey && event !== 'SIGNED_OUT') {
+      console.debug('[Auth] Skipping duplicate event:', event);
+      return;
+    }
+    lastAuthEvent.current = eventKey;
+
     console.log('[Auth] Auth state changed:', event);
 
     setSession(newSession);
     setUser(newSession?.user ?? null);
     setLoading(false);
 
-    // Fetch user role and link data on sign in
+    // Fetch user role and link data on sign in (only once per user)
     if (event === 'SIGNED_IN' && newSession?.user) {
-      // Fetch role first
+      // Fetch role first (has internal deduplication)
       const role = await fetchUserRole(newSession.user.id);
 
       // Then update user object with role
@@ -100,9 +132,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.warn('[Auth] Session linking skipped:', e);
       }
 
-      // Link leads to user
+      // Link leads to user (delay to avoid race conditions)
       setTimeout(() => {
-        linkUserToLeads();
+        if (newSession?.user?.id && newSession?.user?.email) {
+          supabase
+            .from('leads')
+            .update({ user_id: newSession.user.id })
+            .eq('user_email', newSession.user.email)
+            .is('user_id', null)
+            .then(({ error }) => {
+              if (!error) {
+                console.log('[Auth] User linked to existing leads');
+              }
+            });
+        }
       }, 100);
     }
 
@@ -110,8 +153,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (event === 'SIGNED_OUT') {
       localStorage.removeItem('auth_return_to');
       setUserRole(null);
+      lastFetchedUserId.current = null;
+      lastAuthEvent.current = null;
     }
-  }, [fetchUserRole, linkUserToLeads]);
+  }, [fetchUserRole]);
 
   // Initialize auth state
   useEffect(() => {
@@ -155,7 +200,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [handleAuthChange, fetchUserRole]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Handle auth callback from URL hash (for OAuth and Magic Link)
   useEffect(() => {

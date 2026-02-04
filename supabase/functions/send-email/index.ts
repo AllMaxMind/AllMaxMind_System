@@ -27,7 +27,7 @@ const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-visitor-id, x-session-id',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-visitor-id, x-session-id, x-supabase-client-platform, x-supabase-client-version',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
@@ -52,6 +52,11 @@ serve(async (req) => {
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
   if (!supabaseUrl || !supabaseServiceKey) {
+    console.error('[send-email] Missing env vars:', {
+      hasUrl: !!supabaseUrl,
+      hasKey: !!supabaseServiceKey,
+      availableEnvs: Object.keys(Deno.env.toObject()).filter(k => k.includes('SUPABASE'))
+    })
     return new Response(JSON.stringify({
       success: false,
       error: 'Server configuration error: Supabase credentials not found'

@@ -6,7 +6,7 @@ const WHATSAPP_GRAPH_URL = `https://graph.facebook.com/${WHATSAPP_API_VERSION}`;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-visitor-id, x-session-id",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-visitor-id, x-session-id, x-supabase-client-platform, x-supabase-client-version",
 };
 
 interface WhatsAppRequest {
