@@ -27,7 +27,7 @@ const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-visitor-id, x-session-id',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
