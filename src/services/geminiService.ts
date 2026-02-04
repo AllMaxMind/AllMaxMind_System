@@ -125,6 +125,12 @@ export const generateStructuralAnalysis = async (problemStatement: string): Prom
 export const generateAdaptiveQuestions = async (context: any): Promise<any> => {
   if (!apiKey) throw new Error("API Key missing");
 
+  // Language support - respect user's selected language
+  const language = context.language || 'pt-BR';
+  const languageInstruction = language === 'pt-BR'
+    ? 'Respond entirely in Portuguese (Brazil). All questions, explanations, and examples must be in Portuguese.'
+    : 'Respond entirely in English. All questions, explanations, and examples must be in English.';
+
   const systemInstruction = `You are a Senior Technical Diagnostic Consultant.
 Your goal is to generate 5 strategic questions to deepen the understanding of the client's problem.
 
@@ -132,7 +138,8 @@ RULES:
 1. Questions must be investigative, seeking root causes or technical constraints.
 2. Vary categories (Context, Process, Pain, Technical, Scale).
 3. Be direct and professional.
-4. Generate exactly 5 questions.`;
+4. Generate exactly 5 questions.
+5. ${languageInstruction}`;
 
   const userPrompt = `CONTEXT:
 - Initial Problem: "${context.problemText}"
@@ -161,13 +168,19 @@ RULES:
 export const generateBlueprint = async (data: any): Promise<any> => {
    if (!apiKey) throw new Error("API Key missing");
 
+   // Language support - respect user's selected language
+   const language = data.language || 'pt-BR';
+   const languageInstruction = language === 'pt-BR'
+     ? 'Respond entirely in Portuguese (Brazil). Use BRL (R$) for currency. All fields must be in Portuguese.'
+     : 'Respond entirely in English. Use USD ($) for currency. All fields must be in English.';
+
    const systemInstruction = `You are a Senior Enterprise Solutions Architect.
 Create a detailed, viable "Technical Blueprint" to solve the described problem.
 
 GUIDELINES:
 1. Be specific with technology suggestions (e.g., use "Supabase + React + n8n" instead of "Database and Frontend").
 2. The "timelineEstimate" must be realistic for an MVP.
-3. The "estimatedInvestment" should be a range in BRL (Brazilian Real).`;
+3. ${languageInstruction}`;
 
    const userPrompt = `CLIENT CONTEXT:
 - Problem: ${data.problemText}

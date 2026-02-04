@@ -1,13 +1,14 @@
 
 import { DimensionSelection } from '../../supabase/dimensions';
 import { QuestionAnswer } from '../../supabase/answers';
-import { generateAdaptiveQuestions } from '../../../services/geminiService';
+import { generateAdaptiveQuestionsWithFallback } from '../providers/api';
 
 interface GenerateQuestionsInput {
   problemText: string;
   dimensions: DimensionSelection[];
   intentScore: number;
   previousAnswers: QuestionAnswer[];
+  language?: 'pt-BR' | 'en';
 }
 
 export interface AdaptiveQuestion {
@@ -20,16 +21,19 @@ export interface AdaptiveQuestion {
 }
 
 export class AdaptiveQuestionEngine {
-  
-  async generate(input: GenerateQuestionsInput): Promise<AdaptiveQuestion[]> {
-    console.log('[QuestionEngine] Requesting adaptive questions (DIRECT)...');
 
-    // CHAMADA DIRETA: Sem fallback. Se falhar, o usuário verá o erro.
-    const data = await generateAdaptiveQuestions({
+  async generate(input: GenerateQuestionsInput): Promise<AdaptiveQuestion[]> {
+    console.log('[QuestionEngine] Requesting adaptive questions with fallback...');
+    console.log('[QuestionEngine] Language:', input.language || 'pt-BR');
+
+    // Usar API com fallback automático Gemini → OpenAI
+    const data = await generateAdaptiveQuestionsWithFallback({
       problemText: input.problemText,
       dimensions: input.dimensions,
       intentScore: input.intentScore,
-      previousAnswers: input.previousAnswers
+      answers: input.previousAnswers,
+      language: input.language || 'pt-BR',
+      complexity: 'medium'  // Will be refined later
     });
 
     if (data && Array.isArray(data.questions)) {
