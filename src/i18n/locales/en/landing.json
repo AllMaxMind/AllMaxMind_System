@@ -41,10 +41,10 @@
     "ideal": "We need a system that centralizes [goal] and automatically notifies those responsible, eliminating manual work and reducing cycle time to [time goal].\n\n",
     "references": "References and inspirations: [list similar systems or processes you know or use as benchmarks].\n\n"
   },
-  "fullExample": "Currently, we face a serious bottleneck in the expense approval process. The current flow depends on manual emails which frequently get lost.\n\nThis results in delays of up to 5 business days for simple reimbursements. The finance team spends about 15 hours weekly just chasing managers.\n\nWe need a system that centralizes requests and automatically notifies those responsible, eliminating manual work and reducing cycle time to less than 24 hours.",
+  "exampleTemplate": "Currently, we face a serious bottleneck in [describe the process]. The current flow depends on [current method] which frequently [main problem].\n\nThis results in delays of up to [time] for [activity]. The [team name] team spends about [hours] weekly just [manual task].\n\nWe need a system that centralizes [goal] and automatically notifies those responsible, eliminating manual work and reducing cycle time to [time goal].",
   "questionsGuide": {
     "title": "Guide Questions",
-    "useFullExample": "Use Full Example"
+    "useExampleTemplate": "Use Example Template"
   },
   "aiImprove": {
     "processing": "Improving with AI...",

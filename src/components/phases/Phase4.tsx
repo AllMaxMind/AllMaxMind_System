@@ -173,7 +173,7 @@ const Phase4: React.FC<Phase4Props> = ({
         await generateBlueprintContent();
     };
     init();
-  }, []);
+  }, [i18n.language]);
 
   const generateBlueprintContent = async () => {
     setIsGeneratingBlueprint(true);
@@ -184,7 +184,8 @@ const Phase4: React.FC<Phase4Props> = ({
         problemText,
         dimensions,
         questionsAnswers,
-        complexity
+        complexity,
+        language: i18n.language === 'pt-BR' ? 'pt-BR' : 'en'
       });
       setGeneratedBlueprint(blueprint);
       setBlueprintError(null);

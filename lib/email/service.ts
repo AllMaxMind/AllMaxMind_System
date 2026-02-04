@@ -3,10 +3,11 @@
  * Provides client-side wrapper for sending emails via Edge Function
  * Email sending is handled by supabase/functions/send-email
  */
+import { supabase } from '../supabaseClient';
 
 export interface SendEmailParams {
   to: string;
-  templateType: 'lead-confirmation' | 'blueprint-delivery';
+  templateType: 'lead_confirmation' | 'blueprint_delivery';
   data: {
     name: string;
     company: string;
@@ -29,17 +30,21 @@ export async function sendEmail(
   params: SendEmailParams
 ): Promise<SendEmailResponse> {
   try {
-    // Call Edge Function that has access to service role key
-    const response = await fetch('/functions/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(params),
+    // Call Edge Function using Supabase client
+    const { data, error } = await supabase.functions.invoke('send-email', {
+      body: {
+        to: params.to,
+        templateType: params.templateType,
+        data: params.data,
+      },
     });
 
-    const result = await response.json();
+    if (error) {
+      throw new Error(error.message || 'Failed to send email');
+    }
 
-    if (!response.ok) {
-      throw new Error(result.error || 'Failed to send email');
+    if (!data?.success) {
+      throw new Error(data?.error || 'Email service returned error');
     }
 
     console.log(
@@ -48,7 +53,7 @@ export async function sendEmail(
 
     return {
       success: true,
-      messageId: result.messageId,
+      messageId: data.messageId,
     };
   } catch (error: any) {
     console.error('[Email] Error:', error);

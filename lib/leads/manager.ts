@@ -78,7 +78,7 @@ export const saveLeadToSupabase = async (leadData: LeadData): Promise<string> =>
       try {
         const emailResult = await sendEmail({
           to: leadData.email,
-          templateType: 'lead-confirmation',
+          templateType: 'lead_confirmation',
           data: {
             name: leadData.name,
             company: leadData.company,

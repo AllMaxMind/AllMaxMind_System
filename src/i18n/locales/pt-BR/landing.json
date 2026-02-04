@@ -41,10 +41,10 @@
     "ideal": "Precisamos de um sistema que centralize [objetivo] e notifique automaticamente os responsáveis, eliminando o trabalho manual e reduzindo o tempo de ciclo para [meta de tempo].\n\n",
     "references": "Referências e inspirações: [liste sistemas ou processos similares que você conhece ou usa como benchmark].\n\n"
   },
-  "fullExample": "Atualmente, enfrentamos um sério gargalo no processo de aprovação de despesas. O fluxo atual depende de e-mails manuais que frequentemente se perdem.\n\nIsso resulta em atrasos de até 5 dias úteis para reembolsos simples. A equipe financeira gasta cerca de 15 horas semanais apenas cobrando gestores.\n\nPrecisamos de um sistema que centralize as solicitações e notifique automaticamente os responsáveis, eliminando o trabalho manual e reduzindo o tempo de ciclo para menos de 24 horas.",
+  "exampleTemplate": "Atualmente, enfrentamos um sério gargalo no [descreva o processo]. O fluxo atual depende de [método atual] que frequentemente [problema principal].\n\nIsso resulta em atrasos de até [tempo] para [atividade]. A equipe [nome da equipe] gasta cerca de [horas] semanais apenas [tarefa manual].\n\nPrecisamos de um sistema que centralize [objetivo] e notifique automaticamente os responsáveis, eliminando o trabalho manual e reduzindo o tempo de ciclo para [meta de tempo].",
   "questionsGuide": {
     "title": "Questões Guia",
-    "useFullExample": "Usar Exemplo Completo"
+    "useExampleTemplate": "Usar Template de Exemplo"
   },
   "aiImprove": {
     "processing": "Aprimorando com IA...",
