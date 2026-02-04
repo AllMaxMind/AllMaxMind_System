@@ -83,3 +83,97 @@ export const saveProblemToSupabase = async (
     throw error;
   }
 };
+
+/**
+ * Improve problem text using AI via Supabase Edge Function
+ * This is the SECURE way to call Gemini - API key stays on server
+ */
+export interface ImproveTextResponse {
+  improvedText: string;
+  originalLength: number;
+  improvedLength: number;
+}
+
+export const improveProblemTextWithAI = async (
+  problemText: string,
+  language: string = 'pt-BR'
+): Promise<string> => {
+  try {
+    console.log('[Landing] Calling improve-problem-text Edge Function...');
+    console.log('[Landing] Text length:', problemText.length);
+    console.log('[Landing] Language:', language);
+
+    const { data, error } = await supabase.functions.invoke('improve-problem-text', {
+      body: {
+        problemText,
+        language
+      }
+    });
+
+    if (error) {
+      console.error('[Landing] Edge Function error:', error);
+      throw error;
+    }
+
+    if (!data || !data.improvedText) {
+      throw new Error('No improved text returned from Edge Function');
+    }
+
+    console.log('[Landing] ✅ Text improved successfully');
+    console.log('[Landing] Original length:', data.originalLength);
+    console.log('[Landing] Improved length:', data.improvedLength);
+
+    return data.improvedText;
+  } catch (error) {
+    console.error('[Landing] Error improving problem text:', error);
+    throw error;
+  }
+};
+
+/**
+ * Transcribe audio to text using AI via Supabase Edge Function
+ * P2: Audio-to-Text feature
+ */
+export interface TranscribeAudioResponse {
+  transcribedText: string;
+  language: string;
+  audioSize: number;
+}
+
+export const transcribeAudioWithAI = async (
+  audioData: string,
+  mimeType: string = 'audio/webm',
+  language: string = 'pt-BR'
+): Promise<string> => {
+  try {
+    console.log('[Landing] Calling transcribe-audio Edge Function...');
+    console.log('[Landing] MIME type:', mimeType);
+    console.log('[Landing] Language:', language);
+    console.log('[Landing] Audio data length:', audioData.length);
+
+    const { data, error } = await supabase.functions.invoke('transcribe-audio', {
+      body: {
+        audioData,
+        mimeType,
+        language
+      }
+    });
+
+    if (error) {
+      console.error('[Landing] Transcription Edge Function error:', error);
+      throw error;
+    }
+
+    if (!data || !data.transcribedText) {
+      throw new Error('No transcription returned from Edge Function');
+    }
+
+    console.log('[Landing] ✅ Audio transcribed successfully');
+    console.log('[Landing] Transcription length:', data.transcribedText.length);
+
+    return data.transcribedText;
+  } catch (error) {
+    console.error('[Landing] Error transcribing audio:', error);
+    throw error;
+  }
+};

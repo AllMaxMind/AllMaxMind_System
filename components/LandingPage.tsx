@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Mic, Sparkles, Star } from 'lucide-react';
-import { createProblemRecord, analyzeProblemWithEdgeFunction, improveProblemTextWithAI } from '../lib/supabase/problems';
+import { Mic, MicOff, Square, Sparkles, Star } from 'lucide-react';
+import { createProblemRecord, analyzeProblemWithEdgeFunction, improveProblemTextWithAI, transcribeAudioWithAI } from '../lib/supabase/problems';
 import { validateProblemText, checkRateLimit } from '../lib/validation/problem';
 import { analytics } from '../lib/analytics';
 import { useToast } from './ui/Toast';
+import { useAudioRecorder, blobToBase64, formatDuration } from '../src/hooks/useAudioRecorder';
 
 type DomainType = 'technical' | 'business' | 'strategic';
 
@@ -21,9 +22,22 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAnalyze }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [isImproving, setIsImproving] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   const [activeQuestion, setActiveQuestion] = useState<number | null>(0);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const toast = useToast();
+
+  // P2: Audio recording hook
+  const {
+    isRecording,
+    isSupported: isAudioSupported,
+    permissionStatus,
+    recordingDuration,
+    startRecording,
+    stopRecording,
+    cancelRecording,
+    error: audioError,
+  } = useAudioRecorder();
 
   const canAnalyze = problemText.length >= 20 && !isProcessing;
 
@@ -112,6 +126,78 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAnalyze }) => {
       setIsImproving(false);
     }
   };
+
+  // P2: Audio recording handlers
+  const handleAudioRecord = async () => {
+    if (isTyping) setIsTyping(false);
+
+    if (isRecording) {
+      // Stop recording and transcribe
+      toast.info(t('audio.stopping', 'Finalizando gravação...'));
+      const audioBlob = await stopRecording();
+
+      if (audioBlob && audioBlob.size > 0) {
+        setIsTranscribing(true);
+        toast.info(t('audio.transcribing', 'Transcrevendo áudio...'));
+
+        try {
+          const base64Audio = await blobToBase64(audioBlob);
+          const currentLanguage = i18n.language || 'pt-BR';
+          const transcribedText = await transcribeAudioWithAI(
+            base64Audio,
+            audioBlob.type || 'audio/webm',
+            currentLanguage
+          );
+
+          // Append transcribed text to problem text
+          const currentText = problemText.trim();
+          const newText = currentText
+            ? `${currentText}\n\n${transcribedText}`
+            : transcribedText;
+
+          setProblemText(newText);
+          toast.success(t('audio.success', 'Áudio transcrito com sucesso!'));
+
+          analytics.trackEvent('audio_transcribed', {
+            audio_size: audioBlob.size,
+            transcription_length: transcribedText.length,
+            language: currentLanguage,
+          });
+        } catch (error) {
+          console.error('[Landing] Transcription error:', error);
+          toast.error(t('audio.error', 'Erro ao transcrever áudio. Tente novamente.'));
+        } finally {
+          setIsTranscribing(false);
+        }
+      }
+    } else {
+      // Start recording
+      if (!isAudioSupported) {
+        toast.error(t('audio.notSupported', 'Gravação de áudio não suportada neste navegador.'));
+        return;
+      }
+
+      if (permissionStatus === 'denied') {
+        toast.error(t('audio.permissionDenied', 'Permissão de microfone negada. Verifique as configurações do navegador.'));
+        return;
+      }
+
+      try {
+        await startRecording();
+        toast.info(t('audio.recording', 'Gravando... Clique novamente para parar.'));
+      } catch (error) {
+        console.error('[Landing] Recording start error:', error);
+        toast.error(t('audio.startError', 'Erro ao iniciar gravação.'));
+      }
+    }
+  };
+
+  // Show audio error if any
+  useEffect(() => {
+    if (audioError) {
+      toast.error(audioError);
+    }
+  }, [audioError]);
 
   const handleAnalyze = async () => {
     // Validation
@@ -251,13 +337,42 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAnalyze }) => {
               {/* Bottom Action Bar */}
               <div className="p-4 md:p-6 border-t border-slate-700/50 flex flex-col md:flex-row justify-between items-center gap-4 bg-ds-bg/50">
                 <div className="flex items-center gap-3 w-full md:w-auto">
-                  {/* Gravar Áudio Button */}
+                  {/* Gravar Áudio Button - P2 */}
                   <button
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-sm font-medium w-full md:w-auto hover:shadow-lg"
-                    aria-label={t('buttons.recordAudio', 'Gravar Áudio')}
+                    onClick={handleAudioRecord}
+                    disabled={isProcessing || isTranscribing || !isAudioSupported}
+                    className={`relative flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium w-full md:w-auto transition-all ${
+                      isRecording
+                        ? 'bg-red-600/80 border border-red-500 text-white animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.4)]'
+                        : isTranscribing
+                        ? 'bg-teal-900/40 border border-teal-500/50 text-teal-300'
+                        : isAudioSupported
+                        ? 'border border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white hover:shadow-lg'
+                        : 'border border-slate-700/50 text-slate-500 cursor-not-allowed'
+                    }`}
+                    aria-label={isRecording ? t('buttons.stopRecording', 'Parar Gravação') : t('buttons.recordAudio', 'Gravar Áudio')}
                   >
-                    <Mic className="w-4 h-4" />
-                    {t('buttons.recordAudio', 'Gravar Áudio')}
+                    {isRecording ? (
+                      <>
+                        <Square className="w-4 h-4" />
+                        <span>{formatDuration(recordingDuration)}</span>
+                        <span className="hidden sm:inline">{t('buttons.stopRecording', 'Parar')}</span>
+                      </>
+                    ) : isTranscribing ? (
+                      <>
+                        <Mic className="w-4 h-4 animate-pulse" />
+                        {t('audio.transcribing', 'Transcrevendo...')}
+                      </>
+                    ) : (
+                      <>
+                        {permissionStatus === 'denied' ? (
+                          <MicOff className="w-4 h-4" />
+                        ) : (
+                          <Mic className="w-4 h-4" />
+                        )}
+                        {t('buttons.recordAudio', 'Gravar Áudio')}
+                      </>
+                    )}
                   </button>
 
                   {/* Melhorar com IA Button */}

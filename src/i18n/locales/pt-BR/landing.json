@@ -15,8 +15,19 @@
   },
   "buttons": {
     "recordAudio": "Gravar Áudio",
+    "stopRecording": "Parar",
     "improveWithAI": "Melhorar com IA",
     "analyzeWithAI": "Analisar com IA"
+  },
+  "audio": {
+    "recording": "Gravando... Clique novamente para parar.",
+    "stopping": "Finalizando gravação...",
+    "transcribing": "Transcrevendo...",
+    "success": "Áudio transcrito com sucesso!",
+    "error": "Erro ao transcrever áudio. Tente novamente.",
+    "startError": "Erro ao iniciar gravação.",
+    "notSupported": "Gravação de áudio não suportada neste navegador.",
+    "permissionDenied": "Permissão de microfone negada. Verifique as configurações do navegador."
   },
   "questions": {
     "affected": "Quem é afetado?",

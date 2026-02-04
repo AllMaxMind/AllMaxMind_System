@@ -1,0 +1,73 @@
+{
+  "badge": "AI-DRIVEN SMART SOLUTIONS",
+  "hero": {
+    "line1": "Transform operational chaos into",
+    "line2": "Smart solutions"
+  },
+  "placeholder": "Describe the problem you want to solve...",
+  "aiRefining": "AI Refining...",
+  "processing": "Processing...",
+  "nav": {
+    "company": "Company",
+    "solutions": "Solutions",
+    "howItWorks": "How it Works",
+    "signUp": "Sign Up"
+  },
+  "buttons": {
+    "recordAudio": "Record Audio",
+    "stopRecording": "Stop",
+    "improveWithAI": "Improve with AI",
+    "analyzeWithAI": "Analyze with AI"
+  },
+  "audio": {
+    "recording": "Recording... Click again to stop.",
+    "stopping": "Finishing recording...",
+    "transcribing": "Transcribing...",
+    "success": "Audio transcribed successfully!",
+    "error": "Error transcribing audio. Please try again.",
+    "startError": "Error starting recording.",
+    "notSupported": "Audio recording not supported in this browser.",
+    "permissionDenied": "Microphone permission denied. Check your browser settings."
+  },
+  "questions": {
+    "affected": "Who is affected?",
+    "current": "Current solution?",
+    "ideal": "Ideal scenario?",
+    "references": "What references do you have?"
+  },
+  "questionPrompts": {
+    "affected": "Currently, we face a serious bottleneck in [describe the process]. The current flow depends on [current method] which frequently [main problem].\n\n",
+    "current": "This results in delays of up to [time] for [activity]. The [team name] team spends about [hours] weekly just [manual task].\n\n",
+    "ideal": "We need a system that centralizes [goal] and automatically notifies those responsible, eliminating manual work and reducing cycle time to [time goal].\n\n",
+    "references": "References and inspirations: [list similar systems or processes you know or use as benchmarks].\n\n"
+  },
+  "fullExample": "Currently, we face a serious bottleneck in the expense approval process. The current flow depends on manual emails which frequently get lost.\n\nThis results in delays of up to 5 business days for simple reimbursements. The finance team spends about 15 hours weekly just chasing managers.\n\nWe need a system that centralizes requests and automatically notifies those responsible, eliminating manual work and reducing cycle time to less than 24 hours.",
+  "questionsGuide": {
+    "title": "Guide Questions",
+    "useFullExample": "Use Full Example"
+  },
+  "aiImprove": {
+    "processing": "Improving with AI...",
+    "success": "Text improved successfully!",
+    "error": "Error improving text. Please try again."
+  },
+  "errors": {
+    "rateLimit": "Please wait",
+    "processing": "Error processing. Please try again."
+  },
+  "success": {
+    "analyzed": "Analysis complete! Moving forward..."
+  },
+  "footer": {
+    "tagline": "Your business pain becomes a working system",
+    "highlight": "in record time",
+    "description": "AI-powered solutions to transform operational chaos into smart, automated workflows.",
+    "links": "Links",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "contact": "Contact",
+    "connect": "Connect",
+    "rights": "All rights reserved.",
+    "madeWith": "Made with AI-driven intelligence"
+  }
+}
