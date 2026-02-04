@@ -25,7 +25,7 @@ import { generateTechnicalBlueprint, Blueprint } from '../../lib/ai/blueprint';
 import { saveLeadToSupabase, validateLeadForm, sendConfirmationEmail } from '../../lib/leads/manager';
 import { analytics } from '../../lib/analytics';
 import { useToast } from '../ui/Toast';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../src/contexts/AuthContext';
 import LoadingSpinner from '../ui/LoadingSpinner';
 
 interface Phase4Props { 

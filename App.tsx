@@ -9,8 +9,7 @@ import { Navbar, Footer } from './components/layout';
 import CookieConsent from './components/analytics/CookieConsent';
 import { analytics, AnalyticsEvents } from './lib/analytics';
 import { ToastProvider } from './components/ui/Toast';
-import { AuthProvider } from './contexts/AuthContext';
-import { useAuth } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import { DimensionSelection } from './lib/supabase/dimensions';
 import { QuestionAnswer } from './lib/supabase/answers';
 
