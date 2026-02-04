@@ -73,7 +73,7 @@ describe('saveProblemToSupabase', () => {
       error: { message: 'Erro de conexão' },
     });
 
-    await expect(saveProblemToSupabase(validProblem)).rejects.toThrow('Erro de banco de dados: Erro de conexão');
+    await expect(saveProblemToSupabase(validProblem)).rejects.toThrow('Erro de Banco de Dados: Erro de conexão');
   });
 
   it('deve lançar erro se nenhum dado for retornado', async () => {

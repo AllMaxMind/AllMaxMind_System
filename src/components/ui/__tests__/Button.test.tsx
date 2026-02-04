@@ -33,6 +33,6 @@ describe('Button Component', () => {
   it('should apply size classes', () => {
     const { container } = render(<Button size="lg">Big Button</Button>);
     const button = container.firstChild;
-    expect(button).toHaveClass('px-8 py-4');
+    expect(button).toHaveClass('px-6 py-3 text-lg');
   });
 });

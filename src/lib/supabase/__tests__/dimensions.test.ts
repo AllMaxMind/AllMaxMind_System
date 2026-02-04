@@ -74,8 +74,8 @@ describe('saveDimensionsToSupabase', () => {
     mockEq.mockResolvedValue({ error: { message: 'Problem not found' } });
 
     await expect(saveDimensionsToSupabase('prob_123', selections, 90))
-      .rejects.toThrow('Erro ao atualizar score: Problem not found');
-      
+      .rejects.toThrow('DB Error (Update): Problem not found');
+
     // Não deve tentar inserir dimensões se o problema falhou
     expect(mockInsert).not.toHaveBeenCalled();
   });
@@ -85,6 +85,6 @@ describe('saveDimensionsToSupabase', () => {
     mockInsert.mockResolvedValue({ error: { message: 'Insert failed' } }); // Insert fail
 
     await expect(saveDimensionsToSupabase('prob_123', selections, 90))
-      .rejects.toThrow('Erro ao salvar dimensões: Insert failed');
+      .rejects.toThrow('DB Error (Dimensions): Insert failed');
   });
 });

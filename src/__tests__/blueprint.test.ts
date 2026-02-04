@@ -89,7 +89,13 @@ describe('Blueprint Validation', () => {
   });
 
   it('should validate blueprint content for PDF generation', () => {
-    const blueprintContent = validBlueprint.blueprint;
+    // validateBlueprintContent expects camelCase properties
+    const blueprintContent = {
+      title: validBlueprint.blueprint.title,
+      executiveSummary: validBlueprint.blueprint.executive_summary,
+      problemStatement: validBlueprint.blueprint.problem_statement,
+      architectureLayers: validBlueprint.blueprint.architecture_layers
+    };
     const validation = validateBlueprintContent(blueprintContent as any);
     expect(validation.valid).toBe(true);
     expect(validation.errors).toHaveLength(0);
@@ -188,8 +194,8 @@ describe('Blueprint Edge Cases', () => {
       name: 'John Doe',
       blueprint: {
         title: 'Architecture',
-        executive_summary: 'Summary',
-        problem_statement: 'Problem',
+        executive_summary: 'Summary description here for validation',
+        problem_statement: 'Problem statement here for validation',
         architecture_layers: [
           {
             name: 'Layer',

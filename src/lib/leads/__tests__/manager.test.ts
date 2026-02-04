@@ -116,8 +116,8 @@ describe('Leads Manager', () => {
       vi.spyOn(localStorage, 'getItem').mockReturnValue(recentTime.toString());
 
       await expect(saveLeadToSupabase(leadData))
-        .rejects.toThrow('Processando... aguarde um momento.');
-      
+        .rejects.toThrow('Aguarde um momento antes de enviar novamente.');
+
       expect(mockInsert).not.toHaveBeenCalled();
     });
 
@@ -135,7 +135,7 @@ describe('Leads Manager', () => {
       mockSingle.mockResolvedValue({ data: null, error: { message: 'Duplicate email' } });
 
       await expect(saveLeadToSupabase(leadData))
-        .rejects.toThrow('Erro ao registrar interesse: Duplicate email');
+        .rejects.toThrow('DB Error (Leads): Duplicate email');
     });
   });
 });

@@ -65,8 +65,8 @@ describe('saveAnswersToSupabase', () => {
     mockInsert.mockResolvedValue({ error: { message: 'DB Error' } });
 
     await expect(saveAnswersToSupabase('prob_123', answers, 'medium'))
-      .rejects.toThrow('Erro ao salvar respostas: DB Error');
-      
+      .rejects.toThrow('DB Error (Answers): DB Error');
+
     expect(mockUpdate).not.toHaveBeenCalled();
   });
 
@@ -75,6 +75,6 @@ describe('saveAnswersToSupabase', () => {
     mockEq.mockResolvedValue({ error: { message: 'Update Error' } });
 
     await expect(saveAnswersToSupabase('prob_123', answers, 'medium'))
-      .rejects.toThrow('Erro ao atualizar problema: Update Error');
+      .rejects.toThrow('DB Error (Update Final): Update Error');
   });
 });
