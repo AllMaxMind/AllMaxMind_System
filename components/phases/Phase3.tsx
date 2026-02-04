@@ -60,13 +60,17 @@ const Phase3: React.FC<Phase3Props> = ({
   const generateAdaptiveQuestions = async () => {
     setIsGenerating(true);
 
+    // Garantir que language está correto
+    const currentLanguage = i18n.language || 'pt-BR';
+    console.log('[Phase3] Generating questions with language:', currentLanguage);
+
     try {
       const generatedQuestions = await adaptiveQuestionEngine.generate({
         problemText,
         dimensions,
         intentScore,
         previousAnswers: [], // Primeira rodada
-        language: i18n.language
+        language: currentLanguage
       });
       
       setQuestions(generatedQuestions);

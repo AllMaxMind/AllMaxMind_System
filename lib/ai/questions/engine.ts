@@ -27,13 +27,14 @@ export class AdaptiveQuestionEngine {
 
       // Chamada à Edge Function 'generate-questions'
       // Isso protege nosso "molho secreto" de engenharia de prompt
+      console.log('[QuestionEngine] Language being sent:', input.language || 'pt-BR');
       const { data, error } = await supabase.functions.invoke('generate-questions', {
         body: {
           problemText: input.problemText,
           dimensions: input.dimensions,
           intentScore: input.intentScore,
           previousAnswers: input.previousAnswers,
-          language: input.language || 'en-US'
+          language: input.language || 'pt-BR'
         }
       });
 
