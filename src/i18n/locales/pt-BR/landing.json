@@ -1,0 +1,62 @@
+{
+  "badge": "SOLUÇÕES INTELIGENTES COM IA",
+  "hero": {
+    "line1": "Transforme o caos operacional em",
+    "line2": "Soluções inteligentes"
+  },
+  "placeholder": "Descreva o problema que você quer resolver...",
+  "aiRefining": "IA Refinando...",
+  "processing": "Processando...",
+  "nav": {
+    "company": "Empresa",
+    "solutions": "Soluções",
+    "howItWorks": "Como Funciona",
+    "signUp": "Cadastrar"
+  },
+  "buttons": {
+    "recordAudio": "Gravar Áudio",
+    "improveWithAI": "Melhorar com IA",
+    "analyzeWithAI": "Analisar com IA"
+  },
+  "questions": {
+    "affected": "Quem é afetado?",
+    "current": "Solução atual?",
+    "ideal": "Cenário ideal?",
+    "references": "Que referências você tem?"
+  },
+  "questionPrompts": {
+    "affected": "Atualmente, enfrentamos um sério gargalo no [descreva o processo]. O fluxo atual depende de [método atual] que frequentemente [problema principal].\n\n",
+    "current": "Isso resulta em atrasos de até [tempo] para [atividade]. A equipe [nome da equipe] gasta cerca de [horas] semanais apenas [tarefa manual].\n\n",
+    "ideal": "Precisamos de um sistema que centralize [objetivo] e notifique automaticamente os responsáveis, eliminando o trabalho manual e reduzindo o tempo de ciclo para [meta de tempo].\n\n",
+    "references": "Referências e inspirações: [liste sistemas ou processos similares que você conhece ou usa como benchmark].\n\n"
+  },
+  "fullExample": "Atualmente, enfrentamos um sério gargalo no processo de aprovação de despesas. O fluxo atual depende de e-mails manuais que frequentemente se perdem.\n\nIsso resulta em atrasos de até 5 dias úteis para reembolsos simples. A equipe financeira gasta cerca de 15 horas semanais apenas cobrando gestores.\n\nPrecisamos de um sistema que centralize as solicitações e notifique automaticamente os responsáveis, eliminando o trabalho manual e reduzindo o tempo de ciclo para menos de 24 horas.",
+  "questionsGuide": {
+    "title": "Questões Guia",
+    "useFullExample": "Usar Exemplo Completo"
+  },
+  "aiImprove": {
+    "processing": "Aprimorando com IA...",
+    "success": "Texto aprimorado com sucesso!",
+    "error": "Erro ao melhorar texto. Tente novamente."
+  },
+  "errors": {
+    "rateLimit": "Aguarde",
+    "processing": "Erro ao processar. Tente novamente."
+  },
+  "success": {
+    "analyzed": "Análise completa! Avançando..."
+  },
+  "footer": {
+    "tagline": "Sua dor de negócio vira sistema funcionando",
+    "highlight": "em tempo recorde",
+    "description": "Soluções inteligentes com IA para transformar o caos operacional em fluxos automatizados.",
+    "links": "Links",
+    "privacy": "Política de Privacidade",
+    "terms": "Termos de Uso",
+    "contact": "Contato",
+    "connect": "Conecte-se",
+    "rights": "Todos os direitos reservados.",
+    "madeWith": "Feito com inteligência artificial"
+  }
+}

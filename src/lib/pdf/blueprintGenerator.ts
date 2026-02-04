@@ -162,9 +162,10 @@ export async function downloadBlueprintPDF(
     }
 
     // === TECHNICAL ARCHITECTURE ===
-    if (blueprint.technicalArchitecture?.length) {
-      addSection('Arquitetura Tecnica', blueprint.technicalArchitecture, '→');
-    }
+    // P9: Hidden from PDF (backend still generates for future API use)
+    // if (blueprint.technicalArchitecture?.length) {
+    //   addSection('Arquitetura Tecnica', blueprint.technicalArchitecture, '→');
+    // }
 
     // === KEY FEATURES ===
     if (blueprint.keyFeatures?.length) {

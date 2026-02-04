@@ -212,10 +212,13 @@ const AppContent: React.FC = () => {
     }
   };
 
+  // P8: Landing page handles its own padding, other stages need pt-24 to compensate fixed navbar
+  const needsNavbarPadding = currentStage !== AppStage.LANDING;
+
   return (
     <div className="bg-ds-bg min-h-screen text-ds-text-primary selection:bg-ds-primary-500/30 flex flex-col">
       <Navbar />
-      <main className="flex-1">
+      <main className={`flex-1 ${needsNavbarPadding ? 'pt-24' : ''}`}>
         {renderStage()}
       </main>
       {currentStage === AppStage.LANDING && <Footer />}

@@ -3,6 +3,7 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import { linkSessionToUser } from '../lib/auth/linkSessionToUser';
 import type { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
 
 interface AuthContextType {
@@ -81,7 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(newSession?.user ?? null);
     setLoading(false);
 
-    // Fetch user role and link to leads on sign in
+    // Fetch user role and link data on sign in
     if (event === 'SIGNED_IN' && newSession?.user) {
       // Fetch role first
       const role = await fetchUserRole(newSession.user.id);
@@ -89,7 +90,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Then update user object with role
       setUser(prev => prev ? { ...prev, role } : null);
 
-      // Small delay to ensure state is updated
+      // Link session to user (P3: anonymous blueprints → user account)
+      try {
+        const linkResult = await linkSessionToUser(newSession.user.id);
+        if (linkResult.success && linkResult.blueprintsLinked > 0) {
+          console.log('[Auth] Linked', linkResult.blueprintsLinked, 'blueprints from session');
+        }
+      } catch (e) {
+        console.warn('[Auth] Session linking skipped:', e);
+      }
+
+      // Link leads to user
       setTimeout(() => {
         linkUserToLeads();
       }, 100);
