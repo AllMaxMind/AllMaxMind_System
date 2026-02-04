@@ -302,34 +302,16 @@ const Phase3: React.FC<Phase3Props> = ({
                   autoFocus
                 />
               </div>
-
+              
               <div className="flex justify-between items-center mt-3">
-                <div className="flex items-center gap-2">
-                  <div className="text-xs text-ds-text-tertiary">
-                    {currentQuestion.isCritical ? (
-                      <span className="text-ds-warning flex items-center gap-1">
-                          <AlertTriangle className="w-3 h-3" />
-                          Esta pergunta é fundamental para o diagnóstico
-                      </span>
-                    ) : (
-                      'Quanto mais detalhes, melhor'
-                    )}
-                  </div>
-                  {currentQuestion.example && (
-                    <button
-                      onClick={() => {
-                        const currentText = (answers[currentQuestion.id] || '').trim();
-                        const consolidated = currentText
-                          ? `${currentText}\n\n${currentQuestion.example}`
-                          : currentQuestion.example;
-                        const newAnswers = { ...answers, [currentQuestion.id]: consolidated };
-                        setAnswers(newAnswers);
-                      }}
-                      disabled={isLoadingNext}
-                      className="ml-auto px-3 py-1 text-xs bg-ds-primary-500/20 hover:bg-ds-primary-500/30 text-ds-primary-300 border border-ds-primary-500/30 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                    >
-                      Usar exemplo
-                    </button>
+                <div className="text-xs text-ds-text-tertiary">
+                  {currentQuestion.isCritical ? (
+                    <span className="text-ds-warning flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3" />
+                        Esta pergunta é fundamental para o diagnóstico
+                    </span>
+                  ) : (
+                    'Quanto mais detalhes, melhor'
                   )}
                 </div>
                 <div className="text-xs font-mono text-ds-text-tertiary">
